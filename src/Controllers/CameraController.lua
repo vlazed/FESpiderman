@@ -1,6 +1,6 @@
 local feSpiderman = script:FindFirstAncestor("FE-Spiderman")
 local PlayerHelper = require(feSpiderman.PlayerHelper)
-local Spring = require(feSpiderman.Utils.Spring)
+local Spring = require(feSpiderman.Spring)
 
 local ControllerConstants = require(feSpiderman.Controllers.ControllerConstants)
 

@@ -3,7 +3,7 @@ local feSpiderman = script:FindFirstAncestor("FE-Spiderman")
 local ControllerConstants = require(feSpiderman.Controllers.ControllerConstants)
 local Debugging = require(feSpiderman.Debugging)
 local PlayerHelper = require(feSpiderman.PlayerHelper)
-local Vector = require(feSpiderman.Utils.Vector)
+local Vector = require(feSpiderman.Vector)
 
 local AnimationController = {}
 

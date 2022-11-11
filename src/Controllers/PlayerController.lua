@@ -8,7 +8,7 @@ local ControllerConstants = require(feSpiderman.Controllers.ControllerConstants)
 local CameraController = require(feSpiderman.Controllers.CameraController)
 local PlayerHelper = require(feSpiderman.PlayerHelper)
 
-local Vector = require(feSpiderman.Utils.Vector)
+local Vector = require(feSpiderman.Vector)
 
 local Debris = game:GetService("Debris")
 

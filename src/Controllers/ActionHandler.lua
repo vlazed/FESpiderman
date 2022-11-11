@@ -5,7 +5,7 @@ local CameraController = require(feSpiderman.Controllers.CameraController)
 local PlayerHelper = require(feSpiderman.PlayerHelper)
 local Debugging = require(feSpiderman.Debugging)
 
-local Vector = require(feSpiderman.Utils.Vector)
+local Vector = require(feSpiderman.Vector)
 
 local sendNotification = require(feSpiderman.SendNotification)
 
