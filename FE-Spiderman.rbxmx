@@ -1,0 +1,4234 @@
+<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
+	<Meta name="ExplicitAutoJoints">true</Meta>
+	<External>null</External>
+	<External>nil</External>
+	<Item class="LocalScript" referent="RBX37481F7C22B94237BF98A5E1EDEBD0EC">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<bool name="Disabled">false</bool>
+			<Content name="LinkedSource"><null></null></Content>
+			<string name="Name">FE-Spiderman</string>
+			<token name="RunContext">0</token>
+			<string name="ScriptGuid">{02FCB9B8-358A-4407-A8AE-3CBA3021C89C}</string>
+			<ProtectedString name="Source"><![CDATA[local ControllerConstants = require(script.Controllers.ControllerConstants)
+
+local Settings = {
+    HOLD_DELAY = 0.3,
+    WEB_STRENGTH = 2.5 * 10^5,
+    DRAG_STRENGTH = 1,
+    FALLING_DRAG_STRENGTH = 0.8,
+    HOLDING_DRAG_STRENGTH = 1,
+    CONTROL_STRENGTH = 1000,
+    TAUT_TIME = 1.5,
+    PULL_TIME = 0.75,
+    TAUT_MAGNITUDE = 3,
+    ANTIGRAV_MAGNITUDE = 1,
+    WEB_MAX_DISTANCE = 1000,
+    AUTO_DISTANCE = 500,
+    CLIMB_DIST_THRESHOLD = 2,
+    CLIMB_ANGLE_THRESHOLD = 1,
+    MIN_JUMPPOWER = 50,
+    MAX_JUMPPOWER = 125,
+    JUMP_TIME = 1,
+    FLIP_CHANCE = 50, -- Percent
+    initialWalkspeed = 20,
+    finalWalkspeed = 60,
+    CLIMB_SPEED = 0.5,
+    SKYDIVE_SPEED = 220,
+
+-- CAMERA CONTROLS
+    CAM_RESPONSIVENESS = 2,
+    CAM_SPEED = 1,
+    CAM_MIN_DISTANCE = 16,
+    CAM_MAX_DISTANCE = 64,
+    DOLLY_SPEED = 0.01,
+    PAN_SPEED = 0.01,
+    FOCUS_POINT_BIAS = 0.02,
+
+    originalFOV = 70,
+
+    EnableButton = Enum.KeyCode.F,
+    ClimbingButton = Enum.KeyCode.Q,
+    AutomaticButton = Enum.KeyCode.E,
+    EmoteButton = Enum.KeyCode.M,
+    HangButton = Enum.KeyCode.Z,
+    ControlButton = Enum.KeyCode.LeftAlt,
+    DodgeButton = Enum.KeyCode.LeftShift,
+    RunButton = Enum.KeyCode.LeftControl,
+    JumpButton = Enum.KeyCode.Space,
+    CameraButton = Enum.KeyCode.Semicolon,
+    FaceForwardButton = Enum.KeyCode.Quote,
+}
+
+ControllerConstants:SetSettings(Settings)
+
+local AnimationController = require(script.Controllers.AnimationController)
+local AudioController = require(script.Controllers.AudioController)
+local PlayerController = require(script.Controllers.PlayerController)
+
+local App = require(script.Components.App)
+
+AudioController:Init()
+AnimationController:Init()
+PlayerController:Init()
+
+App:Init()
+
+local function scriptLoaded()
+	local notifSound = Instance.new("Sound")
+	notifSound.PlaybackSpeed = 1
+	notifSound.Volume = 0.4
+	notifSound.SoundId = "rbxassetid://4066197235"
+	notifSound.PlayOnRemove = true
+    notifSound.Parent = workspace
+	notifSound:Destroy()
+	game.StarterGui:SetCore(
+		"SendNotification", 
+		{
+			Title = "Pizza Time", 
+			Text = "Rope Sim loaded; Press F to enable", 
+			Icon = "rbxassetid://4688867958", 
+			Duration = 5, Button1 = "Close"
+		}
+	)
+end
+
+scriptLoaded()]]></ProtectedString>
+			<int64 name="SourceAssetId">-1</int64>
+			<BinaryString name="Tags"></BinaryString>
+		</Properties>
+		<Item class="Folder" referent="RBXD41C324DF0DF4FF9B6EE8BBB3329F656">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<string name="Name">Assets</string>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+			<Item class="ScreenGui" referent="RBXDE1AA483927E45B781168C4ADAC13375">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<bool name="AutoLocalize">true</bool>
+					<bool name="ClipToDeviceSafeArea">true</bool>
+					<int name="DisplayOrder">0</int>
+					<bool name="Enabled">true</bool>
+					<bool name="IgnoreGuiInset">false</bool>
+					<string name="Name">ScreenGui</string>
+					<bool name="ResetOnSpawn">true</bool>
+					<Ref name="RootLocalizationTable">null</Ref>
+					<token name="SafeAreaCompatibility">1</token>
+					<token name="SelectionBehaviorDown">0</token>
+					<token name="SelectionBehaviorLeft">0</token>
+					<token name="SelectionBehaviorRight">0</token>
+					<token name="SelectionBehaviorUp">0</token>
+					<bool name="SelectionGroup">false</bool>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+					<token name="ZIndexBehavior">1</token>
+				</Properties>
+				<Item class="Frame" referent="RBXF4582D2371A7441F8716944CB7F71B21">
+					<Properties>
+						<bool name="Active">false</bool>
+						<Vector2 name="AnchorPoint">
+							<X>0</X>
+							<Y>0</Y>
+						</Vector2>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<bool name="AutoLocalize">true</bool>
+						<token name="AutomaticSize">0</token>
+						<Color3 name="BackgroundColor3">
+							<R>1</R>
+							<G>1</G>
+							<B>1</B>
+						</Color3>
+						<float name="BackgroundTransparency">0</float>
+						<Color3 name="BorderColor3">
+							<R>0.105882362</R>
+							<G>0.164705887</G>
+							<B>0.207843155</B>
+						</Color3>
+						<token name="BorderMode">0</token>
+						<int name="BorderSizePixel">1</int>
+						<bool name="ClipsDescendants">false</bool>
+						<bool name="Draggable">false</bool>
+						<int name="LayoutOrder">0</int>
+						<string name="Name">Frame</string>
+						<Ref name="NextSelectionDown">null</Ref>
+						<Ref name="NextSelectionLeft">null</Ref>
+						<Ref name="NextSelectionRight">null</Ref>
+						<Ref name="NextSelectionUp">null</Ref>
+						<UDim2 name="Position">
+							<XS>0.385542154</XS>
+							<XO>0</XO>
+							<YS>0.229508191</YS>
+							<YO>0</YO>
+						</UDim2>
+						<Ref name="RootLocalizationTable">null</Ref>
+						<float name="Rotation">0</float>
+						<bool name="Selectable">false</bool>
+						<token name="SelectionBehaviorDown">0</token>
+						<token name="SelectionBehaviorLeft">0</token>
+						<token name="SelectionBehaviorRight">0</token>
+						<token name="SelectionBehaviorUp">0</token>
+						<bool name="SelectionGroup">false</bool>
+						<Ref name="SelectionImageObject">null</Ref>
+						<int name="SelectionOrder">0</int>
+						<UDim2 name="Size">
+							<XS>0</XS>
+							<XO>348</XO>
+							<YS>0</YS>
+							<YO>208</YO>
+						</UDim2>
+						<token name="SizeConstraint">0</token>
+						<int64 name="SourceAssetId">-1</int64>
+						<token name="Style">0</token>
+						<BinaryString name="Tags"></BinaryString>
+						<bool name="Visible">true</bool>
+						<int name="ZIndex">1</int>
+					</Properties>
+					<Item class="ScrollingFrame" referent="RBXD0BA1FF97E0046718E32FB37F551FE8C">
+						<Properties>
+							<bool name="Active">true</bool>
+							<Vector2 name="AnchorPoint">
+								<X>0</X>
+								<Y>0</Y>
+							</Vector2>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<bool name="AutoLocalize">true</bool>
+							<token name="AutomaticCanvasSize">0</token>
+							<token name="AutomaticSize">0</token>
+							<Color3 name="BackgroundColor3">
+								<R>0.192156866</R>
+								<G>0.203921571</G>
+								<B>0.239215687</B>
+							</Color3>
+							<float name="BackgroundTransparency">0</float>
+							<Color3 name="BorderColor3">
+								<R>0.105882362</R>
+								<G>0.164705887</G>
+								<B>0.207843155</B>
+							</Color3>
+							<token name="BorderMode">0</token>
+							<int name="BorderSizePixel">1</int>
+							<Content name="BottomImage"><url>rbxasset://textures/ui/Scroll/scroll-bottom.png</url></Content>
+							<Vector2 name="CanvasPosition">
+								<X>0</X>
+								<Y>0</Y>
+							</Vector2>
+							<UDim2 name="CanvasSize">
+								<XS>0</XS>
+								<XO>0</XO>
+								<YS>2</YS>
+								<YO>0</YO>
+							</UDim2>
+							<bool name="ClipsDescendants">true</bool>
+							<bool name="Draggable">false</bool>
+							<token name="ElasticBehavior">0</token>
+							<token name="HorizontalScrollBarInset">0</token>
+							<int name="LayoutOrder">0</int>
+							<Content name="MidImage"><url>rbxasset://textures/ui/Scroll/scroll-middle.png</url></Content>
+							<string name="Name">Tabs</string>
+							<Ref name="NextSelectionDown">null</Ref>
+							<Ref name="NextSelectionLeft">null</Ref>
+							<Ref name="NextSelectionRight">null</Ref>
+							<Ref name="NextSelectionUp">null</Ref>
+							<UDim2 name="Position">
+								<XS>-0.000542388589</XS>
+								<XO>0</XO>
+								<YS>-0.0014974887</YS>
+								<YO>0</YO>
+							</UDim2>
+							<Ref name="RootLocalizationTable">null</Ref>
+							<float name="Rotation">0</float>
+							<Color3 name="ScrollBarImageColor3">
+								<R>0</R>
+								<G>0</G>
+								<B>0</B>
+							</Color3>
+							<float name="ScrollBarImageTransparency">0</float>
+							<int name="ScrollBarThickness">12</int>
+							<token name="ScrollingDirection">4</token>
+							<bool name="ScrollingEnabled">true</bool>
+							<bool name="Selectable">true</bool>
+							<token name="SelectionBehaviorDown">0</token>
+							<token name="SelectionBehaviorLeft">0</token>
+							<token name="SelectionBehaviorRight">0</token>
+							<token name="SelectionBehaviorUp">0</token>
+							<bool name="SelectionGroup">true</bool>
+							<Ref name="SelectionImageObject">null</Ref>
+							<int name="SelectionOrder">0</int>
+							<UDim2 name="Size">
+								<XS>0</XS>
+								<XO>110</XO>
+								<YS>0</YS>
+								<YO>208</YO>
+							</UDim2>
+							<token name="SizeConstraint">0</token>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+							<Content name="TopImage"><url>rbxasset://textures/ui/Scroll/scroll-top.png</url></Content>
+							<token name="VerticalScrollBarInset">0</token>
+							<token name="VerticalScrollBarPosition">0</token>
+							<bool name="Visible">true</bool>
+							<int name="ZIndex">1</int>
+						</Properties>
+						<Item class="UIListLayout" referent="RBX8113A530B76A4C348D53E154B21379AB">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<token name="FillDirection">1</token>
+								<token name="HorizontalAlignment">1</token>
+								<string name="Name">UIListLayout</string>
+								<UDim name="Padding">
+									<S>0</S>
+									<O>4</O>
+								</UDim>
+								<token name="SortOrder">2</token>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<token name="VerticalAlignment">1</token>
+							</Properties>
+						</Item>
+						<Item class="Frame" referent="RBX8B1791822EB8482FA26606590C999AE9">
+							<Properties>
+								<bool name="Active">false</bool>
+								<Vector2 name="AnchorPoint">
+									<X>0</X>
+									<Y>0</Y>
+								</Vector2>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<bool name="AutoLocalize">true</bool>
+								<token name="AutomaticSize">0</token>
+								<Color3 name="BackgroundColor3">
+									<R>1</R>
+									<G>1</G>
+									<B>1</B>
+								</Color3>
+								<float name="BackgroundTransparency">1</float>
+								<Color3 name="BorderColor3">
+									<R>0.105882362</R>
+									<G>0.164705887</G>
+									<B>0.207843155</B>
+								</Color3>
+								<token name="BorderMode">0</token>
+								<int name="BorderSizePixel">1</int>
+								<bool name="ClipsDescendants">false</bool>
+								<bool name="Draggable">false</bool>
+								<int name="LayoutOrder">0</int>
+								<string name="Name">Keybinds</string>
+								<Ref name="NextSelectionDown">null</Ref>
+								<Ref name="NextSelectionLeft">null</Ref>
+								<Ref name="NextSelectionRight">null</Ref>
+								<Ref name="NextSelectionUp">null</Ref>
+								<UDim2 name="Position">
+									<XS>0</XS>
+									<XO>0</XO>
+									<YS>0</YS>
+									<YO>0</YO>
+								</UDim2>
+								<Ref name="RootLocalizationTable">null</Ref>
+								<float name="Rotation">0</float>
+								<bool name="Selectable">false</bool>
+								<token name="SelectionBehaviorDown">0</token>
+								<token name="SelectionBehaviorLeft">0</token>
+								<token name="SelectionBehaviorRight">0</token>
+								<token name="SelectionBehaviorUp">0</token>
+								<bool name="SelectionGroup">false</bool>
+								<Ref name="SelectionImageObject">null</Ref>
+								<int name="SelectionOrder">0</int>
+								<UDim2 name="Size">
+									<XS>1</XS>
+									<XO>0</XO>
+									<YS>0</YS>
+									<YO>20</YO>
+								</UDim2>
+								<token name="SizeConstraint">0</token>
+								<int64 name="SourceAssetId">-1</int64>
+								<token name="Style">0</token>
+								<BinaryString name="Tags"></BinaryString>
+								<bool name="Visible">true</bool>
+								<int name="ZIndex">1</int>
+							</Properties>
+							<Item class="TextLabel" referent="RBX50A6C717F46543B2BCC410C01FB294A3">
+								<Properties>
+									<bool name="Active">false</bool>
+									<Vector2 name="AnchorPoint">
+										<X>0</X>
+										<Y>0</Y>
+									</Vector2>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<bool name="AutoLocalize">true</bool>
+									<token name="AutomaticSize">0</token>
+									<Color3 name="BackgroundColor3">
+										<R>1</R>
+										<G>1</G>
+										<B>1</B>
+									</Color3>
+									<float name="BackgroundTransparency">1</float>
+									<Color3 name="BorderColor3">
+										<R>0.105882362</R>
+										<G>0.164705887</G>
+										<B>0.207843155</B>
+									</Color3>
+									<token name="BorderMode">0</token>
+									<int name="BorderSizePixel">1</int>
+									<bool name="ClipsDescendants">false</bool>
+									<bool name="Draggable">false</bool>
+									<token name="Font">0</token>
+									<Font name="FontFace">
+										<Family><url>rbxasset://fonts/families/LegacyArial.json</url></Family>
+										<Weight>400</Weight>
+										<Style>Normal</Style>
+										<CachedFaceId><url>rbxasset://fonts/arial.ttf</url></CachedFaceId>
+									</Font>
+									<int name="LayoutOrder">0</int>
+									<float name="LineHeight">1</float>
+									<int name="MaxVisibleGraphemes">-1</int>
+									<string name="Name">Title</string>
+									<Ref name="NextSelectionDown">null</Ref>
+									<Ref name="NextSelectionLeft">null</Ref>
+									<Ref name="NextSelectionRight">null</Ref>
+									<Ref name="NextSelectionUp">null</Ref>
+									<UDim2 name="Position">
+										<XS>0</XS>
+										<XO>0</XO>
+										<YS>0</YS>
+										<YO>0</YO>
+									</UDim2>
+									<bool name="RichText">false</bool>
+									<Ref name="RootLocalizationTable">null</Ref>
+									<float name="Rotation">0</float>
+									<bool name="Selectable">false</bool>
+									<token name="SelectionBehaviorDown">0</token>
+									<token name="SelectionBehaviorLeft">0</token>
+									<token name="SelectionBehaviorRight">0</token>
+									<token name="SelectionBehaviorUp">0</token>
+									<bool name="SelectionGroup">false</bool>
+									<Ref name="SelectionImageObject">null</Ref>
+									<int name="SelectionOrder">0</int>
+									<UDim2 name="Size">
+										<XS>1</XS>
+										<XO>0</XO>
+										<YS>1</YS>
+										<YO>0</YO>
+									</UDim2>
+									<token name="SizeConstraint">0</token>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+									<string name="Text">Controls</string>
+									<Color3 name="TextColor3">
+										<R>1</R>
+										<G>1</G>
+										<B>1</B>
+									</Color3>
+									<bool name="TextScaled">false</bool>
+									<float name="TextSize">7</float>
+									<Color3 name="TextStrokeColor3">
+										<R>0</R>
+										<G>0</G>
+										<B>0</B>
+									</Color3>
+									<float name="TextStrokeTransparency">1</float>
+									<float name="TextTransparency">0</float>
+									<token name="TextTruncate">0</token>
+									<bool name="TextWrapped">true</bool>
+									<token name="TextXAlignment">2</token>
+									<token name="TextYAlignment">1</token>
+									<bool name="Visible">true</bool>
+									<int name="ZIndex">1</int>
+								</Properties>
+							</Item>
+							<Item class="UICorner" referent="RBX68F47D834D444659B2408BC2F988E8B8">
+								<Properties>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<UDim name="CornerRadius">
+										<S>0</S>
+										<O>4</O>
+									</UDim>
+									<string name="Name">UICorner</string>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+								</Properties>
+							</Item>
+							<Item class="UIStroke" referent="RBX6CE9E7E68DF44D09897D6FEE87AE3549">
+								<Properties>
+									<token name="ApplyStrokeMode">0</token>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<Color3 name="Color">
+										<R>0.31764707</R>
+										<G>0.31764707</G>
+										<B>0.31764707</B>
+									</Color3>
+									<bool name="Enabled">true</bool>
+									<token name="LineJoinMode">0</token>
+									<string name="Name">UIStroke</string>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+									<float name="Thickness">1</float>
+									<float name="Transparency">0</float>
+								</Properties>
+							</Item>
+						</Item>
+						<Item class="UICorner" referent="RBX63AD437412C4407C8A98E2D2D4EF09A8">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<UDim name="CornerRadius">
+									<S>0</S>
+									<O>8</O>
+								</UDim>
+								<string name="Name">UICorner</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+							</Properties>
+						</Item>
+						<Item class="UIPadding" referent="RBXBFC6D72831A94AD89AD24AD0EAA1518F">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<string name="Name">UIPadding</string>
+								<UDim name="PaddingBottom">
+									<S>0</S>
+									<O>0</O>
+								</UDim>
+								<UDim name="PaddingLeft">
+									<S>0</S>
+									<O>0</O>
+								</UDim>
+								<UDim name="PaddingRight">
+									<S>0</S>
+									<O>0</O>
+								</UDim>
+								<UDim name="PaddingTop">
+									<S>0</S>
+									<O>12</O>
+								</UDim>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+							</Properties>
+						</Item>
+						<Item class="UIStroke" referent="RBXF89C8472138B4836B78D0B2C74B0F2D3">
+							<Properties>
+								<token name="ApplyStrokeMode">0</token>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<Color3 name="Color">
+									<R>0.349019617</R>
+									<G>0.349019617</G>
+									<B>0.349019617</B>
+								</Color3>
+								<bool name="Enabled">true</bool>
+								<token name="LineJoinMode">2</token>
+								<string name="Name">UIStroke</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<float name="Thickness">1</float>
+								<float name="Transparency">0</float>
+							</Properties>
+						</Item>
+					</Item>
+					<Item class="ScrollingFrame" referent="RBXBD6DCCE182EB4B28BBCBB1D676AD8E24">
+						<Properties>
+							<bool name="Active">true</bool>
+							<Vector2 name="AnchorPoint">
+								<X>0</X>
+								<Y>0</Y>
+							</Vector2>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<bool name="AutoLocalize">true</bool>
+							<token name="AutomaticCanvasSize">0</token>
+							<token name="AutomaticSize">0</token>
+							<Color3 name="BackgroundColor3">
+								<R>0.152941182</R>
+								<G>0.192156866</G>
+								<B>0.239215687</B>
+							</Color3>
+							<float name="BackgroundTransparency">0</float>
+							<Color3 name="BorderColor3">
+								<R>0.105882362</R>
+								<G>0.164705887</G>
+								<B>0.207843155</B>
+							</Color3>
+							<token name="BorderMode">0</token>
+							<int name="BorderSizePixel">1</int>
+							<Content name="BottomImage"><url>rbxasset://textures/ui/Scroll/scroll-bottom.png</url></Content>
+							<Vector2 name="CanvasPosition">
+								<X>0</X>
+								<Y>0</Y>
+							</Vector2>
+							<UDim2 name="CanvasSize">
+								<XS>0</XS>
+								<XO>0</XO>
+								<YS>2</YS>
+								<YO>0</YO>
+							</UDim2>
+							<bool name="ClipsDescendants">true</bool>
+							<bool name="Draggable">false</bool>
+							<token name="ElasticBehavior">0</token>
+							<token name="HorizontalScrollBarInset">0</token>
+							<int name="LayoutOrder">0</int>
+							<Content name="MidImage"><url>rbxasset://textures/ui/Scroll/scroll-middle.png</url></Content>
+							<string name="Name">Window</string>
+							<Ref name="NextSelectionDown">null</Ref>
+							<Ref name="NextSelectionLeft">null</Ref>
+							<Ref name="NextSelectionRight">null</Ref>
+							<Ref name="NextSelectionUp">null</Ref>
+							<UDim2 name="Position">
+								<XS>0.31306833</XS>
+								<XO>0</XO>
+								<YS>-0.00126104383</YS>
+								<YO>0</YO>
+							</UDim2>
+							<Ref name="RootLocalizationTable">null</Ref>
+							<float name="Rotation">0</float>
+							<Color3 name="ScrollBarImageColor3">
+								<R>0</R>
+								<G>0</G>
+								<B>0</B>
+							</Color3>
+							<float name="ScrollBarImageTransparency">0</float>
+							<int name="ScrollBarThickness">12</int>
+							<token name="ScrollingDirection">4</token>
+							<bool name="ScrollingEnabled">true</bool>
+							<bool name="Selectable">true</bool>
+							<token name="SelectionBehaviorDown">0</token>
+							<token name="SelectionBehaviorLeft">0</token>
+							<token name="SelectionBehaviorRight">0</token>
+							<token name="SelectionBehaviorUp">0</token>
+							<bool name="SelectionGroup">true</bool>
+							<Ref name="SelectionImageObject">null</Ref>
+							<int name="SelectionOrder">0</int>
+							<UDim2 name="Size">
+								<XS>0</XS>
+								<XO>239</XO>
+								<YS>0</YS>
+								<YO>208</YO>
+							</UDim2>
+							<token name="SizeConstraint">0</token>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+							<Content name="TopImage"><url>rbxasset://textures/ui/Scroll/scroll-top.png</url></Content>
+							<token name="VerticalScrollBarInset">0</token>
+							<token name="VerticalScrollBarPosition">0</token>
+							<bool name="Visible">true</bool>
+							<int name="ZIndex">1</int>
+						</Properties>
+						<Item class="UICorner" referent="RBXA8B90E74161F458599A7B3229C0A5539">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<UDim name="CornerRadius">
+									<S>0</S>
+									<O>8</O>
+								</UDim>
+								<string name="Name">UICorner</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+							</Properties>
+						</Item>
+						<Item class="UIStroke" referent="RBXCCD90445A2CA43298F60EBEAC285BCCF">
+							<Properties>
+								<token name="ApplyStrokeMode">0</token>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<Color3 name="Color">
+									<R>0.349019617</R>
+									<G>0.349019617</G>
+									<B>0.349019617</B>
+								</Color3>
+								<bool name="Enabled">true</bool>
+								<token name="LineJoinMode">0</token>
+								<string name="Name">UIStroke</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<float name="Thickness">1</float>
+								<float name="Transparency">0</float>
+							</Properties>
+						</Item>
+						<Item class="Frame" referent="RBX6A20D21460C1470E8D1FDAAF1D6353D2">
+							<Properties>
+								<bool name="Active">false</bool>
+								<Vector2 name="AnchorPoint">
+									<X>0</X>
+									<Y>0</Y>
+								</Vector2>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<bool name="AutoLocalize">true</bool>
+								<token name="AutomaticSize">0</token>
+								<Color3 name="BackgroundColor3">
+									<R>1</R>
+									<G>1</G>
+									<B>1</B>
+								</Color3>
+								<float name="BackgroundTransparency">1</float>
+								<Color3 name="BorderColor3">
+									<R>0.105882362</R>
+									<G>0.164705887</G>
+									<B>0.207843155</B>
+								</Color3>
+								<token name="BorderMode">0</token>
+								<int name="BorderSizePixel">1</int>
+								<bool name="ClipsDescendants">false</bool>
+								<bool name="Draggable">false</bool>
+								<int name="LayoutOrder">0</int>
+								<string name="Name">ValueTab</string>
+								<Ref name="NextSelectionDown">null</Ref>
+								<Ref name="NextSelectionLeft">null</Ref>
+								<Ref name="NextSelectionRight">null</Ref>
+								<Ref name="NextSelectionUp">null</Ref>
+								<UDim2 name="Position">
+									<XS>0</XS>
+									<XO>0</XO>
+									<YS>0</YS>
+									<YO>0</YO>
+								</UDim2>
+								<Ref name="RootLocalizationTable">null</Ref>
+								<float name="Rotation">0</float>
+								<bool name="Selectable">false</bool>
+								<token name="SelectionBehaviorDown">0</token>
+								<token name="SelectionBehaviorLeft">0</token>
+								<token name="SelectionBehaviorRight">0</token>
+								<token name="SelectionBehaviorUp">0</token>
+								<bool name="SelectionGroup">false</bool>
+								<Ref name="SelectionImageObject">null</Ref>
+								<int name="SelectionOrder">0</int>
+								<UDim2 name="Size">
+									<XS>1</XS>
+									<XO>0</XO>
+									<YS>0</YS>
+									<YO>20</YO>
+								</UDim2>
+								<token name="SizeConstraint">0</token>
+								<int64 name="SourceAssetId">-1</int64>
+								<token name="Style">0</token>
+								<BinaryString name="Tags"></BinaryString>
+								<bool name="Visible">true</bool>
+								<int name="ZIndex">1</int>
+							</Properties>
+							<Item class="TextLabel" referent="RBX6386E211C1954A0C8677F701B7266800">
+								<Properties>
+									<bool name="Active">false</bool>
+									<Vector2 name="AnchorPoint">
+										<X>0</X>
+										<Y>0</Y>
+									</Vector2>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<bool name="AutoLocalize">true</bool>
+									<token name="AutomaticSize">0</token>
+									<Color3 name="BackgroundColor3">
+										<R>1</R>
+										<G>1</G>
+										<B>1</B>
+									</Color3>
+									<float name="BackgroundTransparency">1</float>
+									<Color3 name="BorderColor3">
+										<R>0.105882362</R>
+										<G>0.164705887</G>
+										<B>0.207843155</B>
+									</Color3>
+									<token name="BorderMode">0</token>
+									<int name="BorderSizePixel">1</int>
+									<bool name="ClipsDescendants">false</bool>
+									<bool name="Draggable">false</bool>
+									<token name="Font">3</token>
+									<Font name="FontFace">
+										<Family><url>rbxasset://fonts/families/SourceSansPro.json</url></Family>
+										<Weight>400</Weight>
+										<Style>Normal</Style>
+										<CachedFaceId><url>rbxasset://fonts/SourceSansPro-Regular.ttf</url></CachedFaceId>
+									</Font>
+									<int name="LayoutOrder">0</int>
+									<float name="LineHeight">1</float>
+									<int name="MaxVisibleGraphemes">-1</int>
+									<string name="Name">Title</string>
+									<Ref name="NextSelectionDown">null</Ref>
+									<Ref name="NextSelectionLeft">null</Ref>
+									<Ref name="NextSelectionRight">null</Ref>
+									<Ref name="NextSelectionUp">null</Ref>
+									<UDim2 name="Position">
+										<XS>0.100000001</XS>
+										<XO>0</XO>
+										<YS>0</YS>
+										<YO>0</YO>
+									</UDim2>
+									<bool name="RichText">false</bool>
+									<Ref name="RootLocalizationTable">null</Ref>
+									<float name="Rotation">0</float>
+									<bool name="Selectable">false</bool>
+									<token name="SelectionBehaviorDown">0</token>
+									<token name="SelectionBehaviorLeft">0</token>
+									<token name="SelectionBehaviorRight">0</token>
+									<token name="SelectionBehaviorUp">0</token>
+									<bool name="SelectionGroup">false</bool>
+									<Ref name="SelectionImageObject">null</Ref>
+									<int name="SelectionOrder">0</int>
+									<UDim2 name="Size">
+										<XS>0.25</XS>
+										<XO>0</XO>
+										<YS>1</YS>
+										<YO>0</YO>
+									</UDim2>
+									<token name="SizeConstraint">0</token>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+									<string name="Text">Controls</string>
+									<Color3 name="TextColor3">
+										<R>1</R>
+										<G>1</G>
+										<B>1</B>
+									</Color3>
+									<bool name="TextScaled">false</bool>
+									<float name="TextSize">14</float>
+									<Color3 name="TextStrokeColor3">
+										<R>0</R>
+										<G>0</G>
+										<B>0</B>
+									</Color3>
+									<float name="TextStrokeTransparency">1</float>
+									<float name="TextTransparency">0</float>
+									<token name="TextTruncate">0</token>
+									<bool name="TextWrapped">false</bool>
+									<token name="TextXAlignment">0</token>
+									<token name="TextYAlignment">1</token>
+									<bool name="Visible">true</bool>
+									<int name="ZIndex">1</int>
+								</Properties>
+							</Item>
+							<Item class="UICorner" referent="RBXAE34963D75454406BBB3AF260CE656CA">
+								<Properties>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<UDim name="CornerRadius">
+										<S>0</S>
+										<O>4</O>
+									</UDim>
+									<string name="Name">UICorner</string>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+								</Properties>
+							</Item>
+							<Item class="UIStroke" referent="RBXF1BE55893D4547259FE8D86A380558AE">
+								<Properties>
+									<token name="ApplyStrokeMode">0</token>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<Color3 name="Color">
+										<R>0.31764707</R>
+										<G>0.31764707</G>
+										<B>0.31764707</B>
+									</Color3>
+									<bool name="Enabled">true</bool>
+									<token name="LineJoinMode">0</token>
+									<string name="Name">UIStroke</string>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+									<float name="Thickness">1</float>
+									<float name="Transparency">0</float>
+								</Properties>
+							</Item>
+							<Item class="TextBox" referent="RBX7E212FEFBE4D4A42A623337B4C80F27C">
+								<Properties>
+									<bool name="Active">true</bool>
+									<Vector2 name="AnchorPoint">
+										<X>1</X>
+										<Y>0</Y>
+									</Vector2>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<bool name="AutoLocalize">true</bool>
+									<token name="AutomaticSize">0</token>
+									<Color3 name="BackgroundColor3">
+										<R>0.141176477</R>
+										<G>0.141176477</G>
+										<B>0.141176477</B>
+									</Color3>
+									<float name="BackgroundTransparency">0</float>
+									<Color3 name="BorderColor3">
+										<R>0.105882362</R>
+										<G>0.164705887</G>
+										<B>0.207843155</B>
+									</Color3>
+									<token name="BorderMode">0</token>
+									<int name="BorderSizePixel">1</int>
+									<bool name="ClearTextOnFocus">true</bool>
+									<bool name="ClipsDescendants">false</bool>
+									<bool name="Draggable">false</bool>
+									<token name="Font">3</token>
+									<Font name="FontFace">
+										<Family><url>rbxasset://fonts/families/SourceSansPro.json</url></Family>
+										<Weight>400</Weight>
+										<Style>Normal</Style>
+										<CachedFaceId><url>rbxasset://fonts/SourceSansPro-Regular.ttf</url></CachedFaceId>
+									</Font>
+									<int name="LayoutOrder">0</int>
+									<float name="LineHeight">1</float>
+									<int name="MaxVisibleGraphemes">-1</int>
+									<bool name="MultiLine">false</bool>
+									<string name="Name">Value</string>
+									<Ref name="NextSelectionDown">null</Ref>
+									<Ref name="NextSelectionLeft">null</Ref>
+									<Ref name="NextSelectionRight">null</Ref>
+									<Ref name="NextSelectionUp">null</Ref>
+									<Color3 name="PlaceholderColor3">
+										<R>1</R>
+										<G>1</G>
+										<B>1</B>
+									</Color3>
+									<string name="PlaceholderText">Value</string>
+									<UDim2 name="Position">
+										<XS>0.899999976</XS>
+										<XO>0</XO>
+										<YS>0.125</YS>
+										<YO>0</YO>
+									</UDim2>
+									<bool name="RichText">false</bool>
+									<Ref name="RootLocalizationTable">null</Ref>
+									<float name="Rotation">0</float>
+									<bool name="Selectable">true</bool>
+									<token name="SelectionBehaviorDown">0</token>
+									<token name="SelectionBehaviorLeft">0</token>
+									<token name="SelectionBehaviorRight">0</token>
+									<token name="SelectionBehaviorUp">0</token>
+									<bool name="SelectionGroup">false</bool>
+									<Ref name="SelectionImageObject">null</Ref>
+									<int name="SelectionOrder">0</int>
+									<bool name="ShowNativeInput">true</bool>
+									<UDim2 name="Size">
+										<XS>0.25</XS>
+										<XO>0</XO>
+										<YS>0.75</YS>
+										<YO>0</YO>
+									</UDim2>
+									<token name="SizeConstraint">0</token>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+									<string name="Text">Value</string>
+									<Color3 name="TextColor3">
+										<R>1</R>
+										<G>1</G>
+										<B>1</B>
+									</Color3>
+									<bool name="TextEditable">true</bool>
+									<bool name="TextScaled">false</bool>
+									<float name="TextSize">14</float>
+									<Color3 name="TextStrokeColor3">
+										<R>0</R>
+										<G>0</G>
+										<B>0</B>
+									</Color3>
+									<float name="TextStrokeTransparency">1</float>
+									<float name="TextTransparency">0</float>
+									<token name="TextTruncate">0</token>
+									<bool name="TextWrapped">false</bool>
+									<token name="TextXAlignment">2</token>
+									<token name="TextYAlignment">1</token>
+									<bool name="Visible">true</bool>
+									<int name="ZIndex">1</int>
+								</Properties>
+							</Item>
+						</Item>
+						<Item class="UIListLayout" referent="RBXD2685A1D65554F619301D7B1858BFED5">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<token name="FillDirection">1</token>
+								<token name="HorizontalAlignment">0</token>
+								<string name="Name">UIListLayout</string>
+								<UDim name="Padding">
+									<S>0</S>
+									<O>0</O>
+								</UDim>
+								<token name="SortOrder">2</token>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<token name="VerticalAlignment">1</token>
+							</Properties>
+						</Item>
+						<Item class="UIPadding" referent="RBX6620077EE7BB4267BA8A2C929E4E46DF">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<string name="Name">UIPadding</string>
+								<UDim name="PaddingBottom">
+									<S>0</S>
+									<O>0</O>
+								</UDim>
+								<UDim name="PaddingLeft">
+									<S>0</S>
+									<O>0</O>
+								</UDim>
+								<UDim name="PaddingRight">
+									<S>0</S>
+									<O>0</O>
+								</UDim>
+								<UDim name="PaddingTop">
+									<S>0</S>
+									<O>24</O>
+								</UDim>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+							</Properties>
+						</Item>
+						<Item class="Frame" referent="RBX74D813703C9D4FF0AA0E5620703A7F3D">
+							<Properties>
+								<bool name="Active">false</bool>
+								<Vector2 name="AnchorPoint">
+									<X>0</X>
+									<Y>0</Y>
+								</Vector2>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<bool name="AutoLocalize">true</bool>
+								<token name="AutomaticSize">0</token>
+								<Color3 name="BackgroundColor3">
+									<R>1</R>
+									<G>1</G>
+									<B>1</B>
+								</Color3>
+								<float name="BackgroundTransparency">1</float>
+								<Color3 name="BorderColor3">
+									<R>0.105882362</R>
+									<G>0.164705887</G>
+									<B>0.207843155</B>
+								</Color3>
+								<token name="BorderMode">0</token>
+								<int name="BorderSizePixel">1</int>
+								<bool name="ClipsDescendants">false</bool>
+								<bool name="Draggable">false</bool>
+								<int name="LayoutOrder">0</int>
+								<string name="Name">BoolTab</string>
+								<Ref name="NextSelectionDown">null</Ref>
+								<Ref name="NextSelectionLeft">null</Ref>
+								<Ref name="NextSelectionRight">null</Ref>
+								<Ref name="NextSelectionUp">null</Ref>
+								<UDim2 name="Position">
+									<XS>0</XS>
+									<XO>0</XO>
+									<YS>0</YS>
+									<YO>0</YO>
+								</UDim2>
+								<Ref name="RootLocalizationTable">null</Ref>
+								<float name="Rotation">0</float>
+								<bool name="Selectable">false</bool>
+								<token name="SelectionBehaviorDown">0</token>
+								<token name="SelectionBehaviorLeft">0</token>
+								<token name="SelectionBehaviorRight">0</token>
+								<token name="SelectionBehaviorUp">0</token>
+								<bool name="SelectionGroup">false</bool>
+								<Ref name="SelectionImageObject">null</Ref>
+								<int name="SelectionOrder">0</int>
+								<UDim2 name="Size">
+									<XS>1</XS>
+									<XO>0</XO>
+									<YS>0</YS>
+									<YO>20</YO>
+								</UDim2>
+								<token name="SizeConstraint">0</token>
+								<int64 name="SourceAssetId">-1</int64>
+								<token name="Style">0</token>
+								<BinaryString name="Tags"></BinaryString>
+								<bool name="Visible">true</bool>
+								<int name="ZIndex">1</int>
+							</Properties>
+							<Item class="TextLabel" referent="RBX89285607A2BF4B678A663E0D66C946EB">
+								<Properties>
+									<bool name="Active">false</bool>
+									<Vector2 name="AnchorPoint">
+										<X>0</X>
+										<Y>0</Y>
+									</Vector2>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<bool name="AutoLocalize">true</bool>
+									<token name="AutomaticSize">0</token>
+									<Color3 name="BackgroundColor3">
+										<R>1</R>
+										<G>1</G>
+										<B>1</B>
+									</Color3>
+									<float name="BackgroundTransparency">1</float>
+									<Color3 name="BorderColor3">
+										<R>0.105882362</R>
+										<G>0.164705887</G>
+										<B>0.207843155</B>
+									</Color3>
+									<token name="BorderMode">0</token>
+									<int name="BorderSizePixel">1</int>
+									<bool name="ClipsDescendants">false</bool>
+									<bool name="Draggable">false</bool>
+									<token name="Font">3</token>
+									<Font name="FontFace">
+										<Family><url>rbxasset://fonts/families/SourceSansPro.json</url></Family>
+										<Weight>400</Weight>
+										<Style>Normal</Style>
+										<CachedFaceId><url>rbxasset://fonts/SourceSansPro-Regular.ttf</url></CachedFaceId>
+									</Font>
+									<int name="LayoutOrder">0</int>
+									<float name="LineHeight">1</float>
+									<int name="MaxVisibleGraphemes">-1</int>
+									<string name="Name">Title</string>
+									<Ref name="NextSelectionDown">null</Ref>
+									<Ref name="NextSelectionLeft">null</Ref>
+									<Ref name="NextSelectionRight">null</Ref>
+									<Ref name="NextSelectionUp">null</Ref>
+									<UDim2 name="Position">
+										<XS>0.100000001</XS>
+										<XO>0</XO>
+										<YS>0</YS>
+										<YO>0</YO>
+									</UDim2>
+									<bool name="RichText">false</bool>
+									<Ref name="RootLocalizationTable">null</Ref>
+									<float name="Rotation">0</float>
+									<bool name="Selectable">false</bool>
+									<token name="SelectionBehaviorDown">0</token>
+									<token name="SelectionBehaviorLeft">0</token>
+									<token name="SelectionBehaviorRight">0</token>
+									<token name="SelectionBehaviorUp">0</token>
+									<bool name="SelectionGroup">false</bool>
+									<Ref name="SelectionImageObject">null</Ref>
+									<int name="SelectionOrder">0</int>
+									<UDim2 name="Size">
+										<XS>0.25</XS>
+										<XO>0</XO>
+										<YS>1</YS>
+										<YO>0</YO>
+									</UDim2>
+									<token name="SizeConstraint">0</token>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+									<string name="Text">ControlName</string>
+									<Color3 name="TextColor3">
+										<R>1</R>
+										<G>1</G>
+										<B>1</B>
+									</Color3>
+									<bool name="TextScaled">false</bool>
+									<float name="TextSize">14</float>
+									<Color3 name="TextStrokeColor3">
+										<R>0</R>
+										<G>0</G>
+										<B>0</B>
+									</Color3>
+									<float name="TextStrokeTransparency">1</float>
+									<float name="TextTransparency">0</float>
+									<token name="TextTruncate">0</token>
+									<bool name="TextWrapped">false</bool>
+									<token name="TextXAlignment">0</token>
+									<token name="TextYAlignment">1</token>
+									<bool name="Visible">true</bool>
+									<int name="ZIndex">1</int>
+								</Properties>
+							</Item>
+							<Item class="UICorner" referent="RBXC0E951B819784759816C094D96E3B961">
+								<Properties>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<UDim name="CornerRadius">
+										<S>0</S>
+										<O>4</O>
+									</UDim>
+									<string name="Name">UICorner</string>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+								</Properties>
+							</Item>
+							<Item class="UIStroke" referent="RBX5E83B122DAF24A839959279AA2CB4BD0">
+								<Properties>
+									<token name="ApplyStrokeMode">0</token>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<Color3 name="Color">
+										<R>0.31764707</R>
+										<G>0.31764707</G>
+										<B>0.31764707</B>
+									</Color3>
+									<bool name="Enabled">true</bool>
+									<token name="LineJoinMode">0</token>
+									<string name="Name">UIStroke</string>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+									<float name="Thickness">1</float>
+									<float name="Transparency">0</float>
+								</Properties>
+							</Item>
+							<Item class="TextLabel" referent="RBXBCD71718E19F4620BA3DB93472C34229">
+								<Properties>
+									<bool name="Active">false</bool>
+									<Vector2 name="AnchorPoint">
+										<X>1</X>
+										<Y>0</Y>
+									</Vector2>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<bool name="AutoLocalize">true</bool>
+									<token name="AutomaticSize">0</token>
+									<Color3 name="BackgroundColor3">
+										<R>0.141176477</R>
+										<G>0.141176477</G>
+										<B>0.141176477</B>
+									</Color3>
+									<float name="BackgroundTransparency">0</float>
+									<Color3 name="BorderColor3">
+										<R>0.105882362</R>
+										<G>0.164705887</G>
+										<B>0.207843155</B>
+									</Color3>
+									<token name="BorderMode">0</token>
+									<int name="BorderSizePixel">1</int>
+									<bool name="ClipsDescendants">false</bool>
+									<bool name="Draggable">false</bool>
+									<token name="Font">3</token>
+									<Font name="FontFace">
+										<Family><url>rbxasset://fonts/families/SourceSansPro.json</url></Family>
+										<Weight>400</Weight>
+										<Style>Normal</Style>
+										<CachedFaceId><url>rbxasset://fonts/SourceSansPro-Regular.ttf</url></CachedFaceId>
+									</Font>
+									<int name="LayoutOrder">0</int>
+									<float name="LineHeight">1</float>
+									<int name="MaxVisibleGraphemes">-1</int>
+									<string name="Name">Value</string>
+									<Ref name="NextSelectionDown">null</Ref>
+									<Ref name="NextSelectionLeft">null</Ref>
+									<Ref name="NextSelectionRight">null</Ref>
+									<Ref name="NextSelectionUp">null</Ref>
+									<UDim2 name="Position">
+										<XS>0.899999976</XS>
+										<XO>0</XO>
+										<YS>0.125</YS>
+										<YO>0</YO>
+									</UDim2>
+									<bool name="RichText">false</bool>
+									<Ref name="RootLocalizationTable">null</Ref>
+									<float name="Rotation">0</float>
+									<bool name="Selectable">false</bool>
+									<token name="SelectionBehaviorDown">0</token>
+									<token name="SelectionBehaviorLeft">0</token>
+									<token name="SelectionBehaviorRight">0</token>
+									<token name="SelectionBehaviorUp">0</token>
+									<bool name="SelectionGroup">false</bool>
+									<Ref name="SelectionImageObject">null</Ref>
+									<int name="SelectionOrder">0</int>
+									<UDim2 name="Size">
+										<XS>0.25</XS>
+										<XO>0</XO>
+										<YS>0.75</YS>
+										<YO>0</YO>
+									</UDim2>
+									<token name="SizeConstraint">0</token>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+									<string name="Text">False</string>
+									<Color3 name="TextColor3">
+										<R>1</R>
+										<G>1</G>
+										<B>1</B>
+									</Color3>
+									<bool name="TextScaled">false</bool>
+									<float name="TextSize">14</float>
+									<Color3 name="TextStrokeColor3">
+										<R>0</R>
+										<G>0</G>
+										<B>0</B>
+									</Color3>
+									<float name="TextStrokeTransparency">1</float>
+									<float name="TextTransparency">0</float>
+									<token name="TextTruncate">0</token>
+									<bool name="TextWrapped">false</bool>
+									<token name="TextXAlignment">2</token>
+									<token name="TextYAlignment">1</token>
+									<bool name="Visible">true</bool>
+									<int name="ZIndex">1</int>
+								</Properties>
+							</Item>
+						</Item>
+					</Item>
+					<Item class="Frame" referent="RBX98D5218AD5CF432BACDBB1A18306F474">
+						<Properties>
+							<bool name="Active">false</bool>
+							<Vector2 name="AnchorPoint">
+								<X>0</X>
+								<Y>0</Y>
+							</Vector2>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<bool name="AutoLocalize">true</bool>
+							<token name="AutomaticSize">0</token>
+							<Color3 name="BackgroundColor3">
+								<R>0.254901975</R>
+								<G>0.270588249</G>
+								<B>0.31764707</B>
+							</Color3>
+							<float name="BackgroundTransparency">0</float>
+							<Color3 name="BorderColor3">
+								<R>0.105882362</R>
+								<G>0.164705887</G>
+								<B>0.207843155</B>
+							</Color3>
+							<token name="BorderMode">0</token>
+							<int name="BorderSizePixel">1</int>
+							<bool name="ClipsDescendants">false</bool>
+							<bool name="Draggable">false</bool>
+							<int name="LayoutOrder">0</int>
+							<string name="Name">Handle</string>
+							<Ref name="NextSelectionDown">null</Ref>
+							<Ref name="NextSelectionLeft">null</Ref>
+							<Ref name="NextSelectionRight">null</Ref>
+							<Ref name="NextSelectionUp">null</Ref>
+							<UDim2 name="Position">
+								<XS>0</XS>
+								<XO>0</XO>
+								<YS>-0.00480769575</YS>
+								<YO>0</YO>
+							</UDim2>
+							<Ref name="RootLocalizationTable">null</Ref>
+							<float name="Rotation">0</float>
+							<bool name="Selectable">false</bool>
+							<token name="SelectionBehaviorDown">0</token>
+							<token name="SelectionBehaviorLeft">0</token>
+							<token name="SelectionBehaviorRight">0</token>
+							<token name="SelectionBehaviorUp">0</token>
+							<bool name="SelectionGroup">false</bool>
+							<Ref name="SelectionImageObject">null</Ref>
+							<int name="SelectionOrder">0</int>
+							<UDim2 name="Size">
+								<XS>0</XS>
+								<XO>348</XO>
+								<YS>0</YS>
+								<YO>12</YO>
+							</UDim2>
+							<token name="SizeConstraint">0</token>
+							<int64 name="SourceAssetId">-1</int64>
+							<token name="Style">0</token>
+							<BinaryString name="Tags"></BinaryString>
+							<bool name="Visible">true</bool>
+							<int name="ZIndex">2</int>
+						</Properties>
+						<Item class="UICorner" referent="RBXE1A068CC2026498ABBC837A9CB45CD6E">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<UDim name="CornerRadius">
+									<S>0</S>
+									<O>2</O>
+								</UDim>
+								<string name="Name">UICorner</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+							</Properties>
+						</Item>
+						<Item class="UIStroke" referent="RBX2DE84E27C16842CDB6BC0D5703A8724B">
+							<Properties>
+								<token name="ApplyStrokeMode">0</token>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<Color3 name="Color">
+									<R>0.349019617</R>
+									<G>0.349019617</G>
+									<B>0.349019617</B>
+								</Color3>
+								<bool name="Enabled">true</bool>
+								<token name="LineJoinMode">2</token>
+								<string name="Name">UIStroke</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<float name="Thickness">1</float>
+								<float name="Transparency">0</float>
+							</Properties>
+						</Item>
+						<Item class="TextLabel" referent="RBXF07E8A01C62E48AE868E2CE5F7D1CFDA">
+							<Properties>
+								<bool name="Active">false</bool>
+								<Vector2 name="AnchorPoint">
+									<X>0</X>
+									<Y>0</Y>
+								</Vector2>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<bool name="AutoLocalize">true</bool>
+								<token name="AutomaticSize">0</token>
+								<Color3 name="BackgroundColor3">
+									<R>1</R>
+									<G>1</G>
+									<B>1</B>
+								</Color3>
+								<float name="BackgroundTransparency">1</float>
+								<Color3 name="BorderColor3">
+									<R>0.105882362</R>
+									<G>0.164705887</G>
+									<B>0.207843155</B>
+								</Color3>
+								<token name="BorderMode">0</token>
+								<int name="BorderSizePixel">1</int>
+								<bool name="ClipsDescendants">false</bool>
+								<bool name="Draggable">false</bool>
+								<token name="Font">3</token>
+								<Font name="FontFace">
+									<Family><url>rbxasset://fonts/families/SourceSansPro.json</url></Family>
+									<Weight>400</Weight>
+									<Style>Normal</Style>
+									<CachedFaceId><url>rbxasset://fonts/SourceSansPro-Regular.ttf</url></CachedFaceId>
+								</Font>
+								<int name="LayoutOrder">0</int>
+								<float name="LineHeight">1</float>
+								<int name="MaxVisibleGraphemes">-1</int>
+								<string name="Name">Title</string>
+								<Ref name="NextSelectionDown">null</Ref>
+								<Ref name="NextSelectionLeft">null</Ref>
+								<Ref name="NextSelectionRight">null</Ref>
+								<Ref name="NextSelectionUp">null</Ref>
+								<UDim2 name="Position">
+									<XS>0</XS>
+									<XO>0</XO>
+									<YS>0</YS>
+									<YO>0</YO>
+								</UDim2>
+								<bool name="RichText">false</bool>
+								<Ref name="RootLocalizationTable">null</Ref>
+								<float name="Rotation">0</float>
+								<bool name="Selectable">false</bool>
+								<token name="SelectionBehaviorDown">0</token>
+								<token name="SelectionBehaviorLeft">0</token>
+								<token name="SelectionBehaviorRight">0</token>
+								<token name="SelectionBehaviorUp">0</token>
+								<bool name="SelectionGroup">false</bool>
+								<Ref name="SelectionImageObject">null</Ref>
+								<int name="SelectionOrder">0</int>
+								<UDim2 name="Size">
+									<XS>1</XS>
+									<XO>0</XO>
+									<YS>1</YS>
+									<YO>0</YO>
+								</UDim2>
+								<token name="SizeConstraint">0</token>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<string name="Text">FE Spiderman Settings</string>
+								<Color3 name="TextColor3">
+									<R>1</R>
+									<G>1</G>
+									<B>1</B>
+								</Color3>
+								<bool name="TextScaled">false</bool>
+								<float name="TextSize">14</float>
+								<Color3 name="TextStrokeColor3">
+									<R>0</R>
+									<G>0</G>
+									<B>0</B>
+								</Color3>
+								<float name="TextStrokeTransparency">1</float>
+								<float name="TextTransparency">0</float>
+								<token name="TextTruncate">0</token>
+								<bool name="TextWrapped">false</bool>
+								<token name="TextXAlignment">2</token>
+								<token name="TextYAlignment">1</token>
+								<bool name="Visible">true</bool>
+								<int name="ZIndex">1</int>
+							</Properties>
+						</Item>
+						<Item class="TextLabel" referent="RBXD5D16D856B7F4BEE8A62B02C79DE47A5">
+							<Properties>
+								<bool name="Active">false</bool>
+								<Vector2 name="AnchorPoint">
+									<X>0</X>
+									<Y>0</Y>
+								</Vector2>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<bool name="AutoLocalize">true</bool>
+								<token name="AutomaticSize">0</token>
+								<Color3 name="BackgroundColor3">
+									<R>1</R>
+									<G>1</G>
+									<B>1</B>
+								</Color3>
+								<float name="BackgroundTransparency">1</float>
+								<Color3 name="BorderColor3">
+									<R>0.105882362</R>
+									<G>0.164705887</G>
+									<B>0.207843155</B>
+								</Color3>
+								<token name="BorderMode">0</token>
+								<int name="BorderSizePixel">1</int>
+								<bool name="ClipsDescendants">false</bool>
+								<bool name="Draggable">false</bool>
+								<token name="Font">3</token>
+								<Font name="FontFace">
+									<Family><url>rbxasset://fonts/families/SourceSansPro.json</url></Family>
+									<Weight>400</Weight>
+									<Style>Normal</Style>
+									<CachedFaceId><url>rbxasset://fonts/SourceSansPro-Regular.ttf</url></CachedFaceId>
+								</Font>
+								<int name="LayoutOrder">0</int>
+								<float name="LineHeight">1</float>
+								<int name="MaxVisibleGraphemes">-1</int>
+								<string name="Name">Minimize</string>
+								<Ref name="NextSelectionDown">null</Ref>
+								<Ref name="NextSelectionLeft">null</Ref>
+								<Ref name="NextSelectionRight">null</Ref>
+								<Ref name="NextSelectionUp">null</Ref>
+								<UDim2 name="Position">
+									<XS>0</XS>
+									<XO>0</XO>
+									<YS>0</YS>
+									<YO>0</YO>
+								</UDim2>
+								<bool name="RichText">false</bool>
+								<Ref name="RootLocalizationTable">null</Ref>
+								<float name="Rotation">0</float>
+								<bool name="Selectable">false</bool>
+								<token name="SelectionBehaviorDown">0</token>
+								<token name="SelectionBehaviorLeft">0</token>
+								<token name="SelectionBehaviorRight">0</token>
+								<token name="SelectionBehaviorUp">0</token>
+								<bool name="SelectionGroup">false</bool>
+								<Ref name="SelectionImageObject">null</Ref>
+								<int name="SelectionOrder">0</int>
+								<UDim2 name="Size">
+									<XS>0.0500000007</XS>
+									<XO>0</XO>
+									<YS>1</YS>
+									<YO>0</YO>
+								</UDim2>
+								<token name="SizeConstraint">0</token>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<string name="Text">&#195;&#131;&#194;&#162;&#195;&#130;&#194;&#128;&#195;&#130;&#194;&#148;</string>
+								<Color3 name="TextColor3">
+									<R>1</R>
+									<G>1</G>
+									<B>1</B>
+								</Color3>
+								<bool name="TextScaled">false</bool>
+								<float name="TextSize">14</float>
+								<Color3 name="TextStrokeColor3">
+									<R>0</R>
+									<G>0</G>
+									<B>0</B>
+								</Color3>
+								<float name="TextStrokeTransparency">1</float>
+								<float name="TextTransparency">0</float>
+								<token name="TextTruncate">0</token>
+								<bool name="TextWrapped">false</bool>
+								<token name="TextXAlignment">2</token>
+								<token name="TextYAlignment">1</token>
+								<bool name="Visible">true</bool>
+								<int name="ZIndex">1</int>
+							</Properties>
+						</Item>
+					</Item>
+					<Item class="UICorner" referent="RBXE19EBEAC99F1481AB129AF6EC6D0568D">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<UDim name="CornerRadius">
+								<S>0</S>
+								<O>8</O>
+							</UDim>
+							<string name="Name">UICorner</string>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+				</Item>
+			</Item>
+		</Item>
+		<Item class="Folder" referent="RBX173A56C4CFFB4D8C8B6B30AC9AF96629">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<string name="Name">Components</string>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+			<Item class="ModuleScript" referent="RBX99A85361845D40D8BDDC5005FF468CFF">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">App</string>
+					<string name="ScriptGuid">{4C853A1F-786F-415E-97BC-C927F23C96F6}</string>
+					<ProtectedString name="Source"><![CDATA[local feSpiderman = script:FindFirstAncestor("FE-Spiderman")
+local Tabs = require(feSpiderman.Components.Tabs)
+local Window = require(feSpiderman.Components.Window)
+
+local App = {}
+
+function App:Init()
+    Tabs:Init()
+    Window:Init()
+end
+
+return App]]></ProtectedString>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBXEC5BB627C7F84CC9B2B18A77A5DBCE47">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">Tabs</string>
+					<string name="ScriptGuid">{8E475678-CC8D-406B-A5EE-95290A288261}</string>
+					<ProtectedString name="Source"><![CDATA[local Tabs = {}
+
+function Tabs:Init()
+end
+
+return Tabs]]></ProtectedString>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBX308FDE9464714A048F24C915829F92B7">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">Window</string>
+					<string name="ScriptGuid">{20E1A2C2-3736-4720-83DF-54A6419429E3}</string>
+					<ProtectedString name="Source"><![CDATA[local Window = {}
+
+function Window:Init()
+end
+
+return Window]]></ProtectedString>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+		</Item>
+		<Item class="Folder" referent="RBX589849723A7041B199640393B20920D6">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<string name="Name">Controllers</string>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+			<Item class="ModuleScript" referent="RBXDD81C989C67447FE9A7AEFB4C35185AF">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">ActionHandler</string>
+					<string name="ScriptGuid">{FE6ED2B1-EEA0-4D18-8B57-36F21570A684}</string>
+					<ProtectedString name="Source"><![CDATA[local feSpiderman = script:FindFirstAncestor("FE-Spiderman")
+local ControllerConstants = require(feSpiderman.Controllers.ControllerConstants)
+local AnimationController = require(feSpiderman.Controllers.AnimationController)
+local CameraController = require(feSpiderman.Controllers.CameraController)
+local PlayerHelper = require(feSpiderman.PlayerHelper)
+local Debugging = require(feSpiderman.Debugging)
+
+local Vector = require(feSpiderman.Vector)
+
+local sendNotification = require(feSpiderman.SendNotification)
+
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local ContextActionService = game:GetService("ContextActionService")
+
+local ActionHandler = {}
+
+local prevSettings = {}
+
+local MouseMovement = Enum.UserInputType.MouseMovement
+local MouseWheel = Enum.UserInputType.MouseWheel
+
+function table_eq(table1, table2)
+    local avoid_loops = {}
+    local function recurse(t1, t2)
+       -- compare value types
+       if type(t1) ~= type(t2) then return false end
+       -- Base case: compare simple values
+       if type(t1) ~= "table" then return t1 == t2 end
+       -- Now, on to tables.
+       -- First, let's avoid looping forever.
+       if avoid_loops[t1] then return avoid_loops[t1] == t2 end
+       avoid_loops[t1] = t2
+       -- Copy keys from t2
+       local t2keys = {}
+       local t2tablekeys = {}
+       for k, _ in pairs(t2) do
+          if type(k) == "table" then table.insert(t2tablekeys, k) end
+          t2keys[k] = true
+       end
+       -- Let's iterate keys from t1
+       for k1, v1 in pairs(t1) do
+          local v2 = t2[k1]
+          if type(k1) == "table" then
+             -- if key is a table, we need to find an equivalent one.
+             local ok = false
+             for i, tk in ipairs(t2tablekeys) do
+                if table_eq(k1, tk) and recurse(v1, t2[tk]) then
+                   table.remove(t2tablekeys, i)
+                   t2keys[tk] = nil
+                   ok = true
+                   break
+                end
+             end
+             if not ok then return false end
+          else
+             -- t1 has a key which t2 doesn't have, fail.
+             if v2 == nil then return false end
+             t2keys[k1] = nil
+             if not recurse(v1, v2) then return false end
+          end
+       end
+       -- if t2 has a key which t1 doesn't have, fail.
+       if next(t2keys) then return false end
+       return true
+    end
+    return recurse(table1, table2)
+end
+
+
+local function mouseMovementAction(actionName, inputState, inputObj)
+	local camera = workspace.Camera
+	if inputState == Enum.UserInputState.Change then
+		if inputObj.UserInputType == MouseMovement then
+			CameraController.mouseVector = inputObj.Position - Vector3.new(camera.ViewportSize.X/2, camera.ViewportSize.Y/2, 0)
+			CameraController.mouseVector = Vector3.new(CameraController.mouseVector.X, -CameraController.mouseVector.Y, 0) / 100	
+		elseif inputObj.UserInputType == MouseWheel then
+			CameraController:UpdateDistance(inputObj.Position.Z)
+		end
+	end
+end
+
+
+local function cameraAction(actionName, inputState, inputObj)
+	local Settings = ControllerConstants:GetSettings()
+
+    if inputState == Enum.UserInputState.Begin then
+		if inputObj.KeyCode == Settings.CameraButton then
+			CameraController:ToggleCamera()
+            if CameraController.isCameraToggled then
+                RunService:BindToRenderStep("CameraControl", 1, CameraController.Update)
+                ContextActionService:BindAction('MouseMovement', mouseMovementAction, false, MouseMovement, MouseWheel)
+            else
+                RunService:UnbindFromRenderStep("CameraControl")
+                ContextActionService:UnbindAction('MouseMovement')
+                workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+            end
+		elseif inputObj.KeyCode == Settings.FaceForwardButton then
+			PlayerHelper:ToggleFaceForward()
+		end		
+	end
+end
+
+
+function ActionHandler:isKeyDown(keyCode)
+	return Vector.bool_to_number(UserInputService:IsKeyDown(keyCode))
+end
+
+
+function ActionHandler:isKeyDownBool(keyCode)
+	return UserInputService:IsKeyDown(keyCode)
+end
+
+
+function ActionHandler:Update(sprintFunc, jumpFunc)
+    local Settings = ControllerConstants:GetSettings()
+
+    if table_eq(Settings, prevSettings) then 
+        --print("Tables equal") 
+        return 
+    end
+    
+    print("Binding actions")
+    print("Listen Function bound")
+    ContextActionService:UnbindAction("EnableWebSwinging")
+	ContextActionService:BindAction(
+        "EnableWebSwinging",
+        self.Listen,
+        false,
+        Settings.EnableButton, 
+        Settings.AutomaticButton, 
+        Settings.ClimbingButton, 
+        Settings.DodgeButton, 
+        Settings.EmoteButton
+    )
+
+	ContextActionService:UnbindAction('SPEED')
+	ContextActionService:BindAction(
+        'SPEED', 
+        sprintFunc, 
+        false, 
+        Settings.RunButton
+    )
+    print("Sprint Function bound")
+
+	ContextActionService:UnbindAction('MouseMovement')
+	ContextActionService:BindAction(
+        "ControlHandler", 
+        self.CameraListen, 
+        false, 
+        Settings.ControlButton
+    )
+    print("Camera Function bound")
+
+	ContextActionService:UnbindAction('JUMP')
+	ContextActionService:BindAction(
+        'JUMP', 
+        jumpFunc, 
+        false, 
+        Settings.JumpButton
+    )
+    print("Jump Function bound")
+
+    prevSettings = Settings
+	Debugging:print("Jump and Speed controls")
+end
+
+
+function ActionHandler:HookRenderStepFunctions(dragFunc, controlSwingingFunc, fallingFunc)
+    local success, message = pcall(function() 
+        RunService:UnbindFromRenderStep("ImposeDrag") 
+    end)
+	if success then
+		Debugging:print("Success: Drag force unbound!")
+	else 
+		Debugging:print("An error occurred with unbinding drag force: " .. message)
+	end
+	RunService:BindToRenderStep("ImposeDrag", 1, dragFunc)
+	Debugging:print("Drag Force rebound")
+
+	success, message = pcall(function() 
+        RunService:UnbindFromRenderStep("ControlSwinging") 
+    end)
+	if success then
+		Debugging:print("Success: Swing control unbound!")
+	else 
+		Debugging:print("An error occurred with unbinding swing control: " .. message)
+	end
+	RunService:BindToRenderStep("ControlSwinging", 1, controlSwingingFunc)
+	Debugging:print("Swing control rebound")
+	success, message = pcall(function() 
+        RunService:UnbindFromRenderStep("FallingAnimation") 
+    end)
+	if success then
+		Debugging:print("Success: Falling animation unbound!")
+	else 
+		Debugging:print("An error occurred with unbinding falling animation: " .. message)
+	end
+	RunService:BindToRenderStep("FallingAnimation", 1, fallingFunc)
+	Debugging:print("Falling animation rebound")
+end
+
+
+function ActionHandler.CameraListen(actionName, inputState, inputObj)
+    local Settings = ControllerConstants:GetSettings()
+
+    print(Settings)
+	if inputState == Enum.UserInputState.Begin then
+		if inputObj.KeyCode == Settings.ControlButton then
+            ContextActionService:BindAction('ToggleCamera', cameraAction, false, Settings.CameraButton, Settings.FaceForwardButton)
+        end
+    elseif inputState == Enum.UserInputState.End then
+        ContextActionService:UnbindAction('ToggleCamera')
+	end
+end
+
+
+function ActionHandler.Listen(actionName, inputState, inputObj)
+    local Settings = ControllerConstants:GetSettings()
+
+    --print(Settings)
+	if inputState == Enum.UserInputState.Begin then
+		if inputObj.KeyCode == Settings.EnableButton then
+			PlayerHelper.websEnabled = not PlayerHelper.websEnabled
+            if PlayerHelper.websEnabled then
+                sendNotification("Webs Enabled", "Left Click to Shoot; Press E for Auto Mode", "Close", 1)
+            else
+                sendNotification("Webs Disabled", "Press F to re-enable", "Close", 1)
+            end
+		elseif inputObj.KeyCode == Settings.AutomaticButton then
+			PlayerHelper.isAutomatic = not PlayerHelper.isAutomatic
+			if PlayerHelper.isAutomatic then
+				sendNotification("Automatic Mode", "", "Close", 1)
+			else
+				sendNotification("Manual Mode", "", "Close", 1)
+			end
+		elseif inputObj.KeyCode == Settings.ClimbingButton then
+			PlayerHelper.canClimb = true
+		elseif inputObj.KeyCode == Settings.DodgeButton then
+            PlayerHelper.Dodging = true
+		elseif inputObj.KeyCode == Settings.EmoteButton then
+			AnimationController:Emote()
+		end
+	elseif inputState == Enum.UserInputState.End then
+		if inputObj.KeyCode == Settings.ClimbingButton then
+			PlayerHelper.canClimb = false
+		end
+	end
+end
+
+
+return ActionHandler]]></ProtectedString>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBXB440E2431ED74BFDBFD908BE964B718A">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">AnimationController</string>
+					<string name="ScriptGuid">{EE7C8104-50B7-4071-B759-D978BB69D77E}</string>
+					<ProtectedString name="Source"><![CDATA[local feSpiderman = script:FindFirstAncestor("FE-Spiderman")
+
+local ControllerConstants = require(feSpiderman.Controllers.ControllerConstants)
+local Debugging = require(feSpiderman.Debugging)
+local PlayerHelper = require(feSpiderman.PlayerHelper)
+local Vector = require(feSpiderman.Vector)
+
+local AnimationController = {}
+
+AnimationController.climbTrack = nil
+AnimationController.fallTrack = nil
+AnimationController.swingTrack = nil
+AnimationController.swingLegsTrack = nil
+AnimationController.shootTrack = nil
+AnimationController.releaseTrack = nil
+AnimationController.dodgeTrack = nil
+AnimationController.emoteTrackA = nil
+AnimationController.emoteTrackB = nil
+AnimationController.emoteTrackC = nil
+AnimationController.skydiveMainTrack = nil
+AnimationController.skydiveLayerTrack = nil
+AnimationController.hangTrack = nil
+AnimationController.lookTrackA = nil
+AnimationController.lookTrackB = nil
+
+AnimationController.swingLegsPosition = 0.51
+AnimationController.pullPosition = 1.16
+
+local character, humanoid, hrp
+local ZERO = 1e-6
+
+local EMOTE_R15_TABLE = {
+	"http://www.roblox.com/asset/?id=3695333486",
+	"http://www.roblox.com/asset/?id=4049551434",
+	"http://www.roblox.com/asset/?id=5104344710",
+}
+
+local EMOTE_R06_TABLE = {
+	"http://www.roblox.com/asset/?id=75354915",
+	"http://www.roblox.com/asset/?id=87986341",
+	"http://www.roblox.com/asset/?id=33796059"
+}
+
+
+function AnimationController:Init()
+    character, humanoid = PlayerHelper:isAlive()
+    hrp = PlayerHelper:getCharacterHumanoidRootPart()
+
+    local climbAnimation = character:FindFirstChild("ClimbAnim", true)
+	if climbAnimation then
+		Debugging:print("Found climbing anim")
+		self.climbTrack = humanoid.Animator:LoadAnimation(climbAnimation)
+	end
+
+	local fallAnimation = Instance.new("Animation")
+	local swingAnimation = Instance.new("Animation")
+	local swingLegsAnimation = Instance.new("Animation")
+	local shootAnimation = Instance.new("Animation")
+	local releaseAnimation = Instance.new("Animation")
+	local dodgeAnimation = Instance.new("Animation")
+	local emoteAnimationA = Instance.new("Animation")
+	local emoteAnimationB = Instance.new("Animation")
+	local emoteAnimationC = Instance.new("Animation")
+	local skydiveMainAnimation = Instance.new("Animation")
+	local skydiveLayerAnimation = Instance.new("Animation")
+	local hangAnimation = Instance.new("Animation")
+	local lookAnimation = Instance.new("Animation")
+
+	if humanoid.RigType == Enum.HumanoidRigType.R15 then
+		fallAnimation.AnimationId = "http://www.roblox.com/asset/?id=2510195892"
+		swingAnimation.AnimationId = "http://www.roblox.com/asset/?id=5918726674"
+		swingLegsAnimation.AnimationId = "http://www.roblox.com/asset/?id=5895324424"
+		shootAnimation.AnimationId = "http://www.roblox.com/asset/?id=7202863182"
+		releaseAnimation.AnimationId = "http://www.roblox.com/asset/?id=5918726674"
+		dodgeAnimation.AnimationId = "http://www.roblox.com/asset/?id=5915648917"
+		emoteAnimationA.AnimationId = EMOTE_R15_TABLE[1]
+		emoteAnimationB.AnimationId = EMOTE_R15_TABLE[2]
+		emoteAnimationC.AnimationId = EMOTE_R15_TABLE[3]
+		skydiveMainAnimation.AnimationId = "http://www.roblox.com/asset/?id=1083464683"
+		skydiveLayerAnimation.AnimationId = "http://www.roblox.com/asset/?id=742639220"
+		hangAnimation.AnimationId = "http://www.roblox.com/asset/?id=5915712534"
+		lookAnimation.AnimationId = "http://www.roblox.com/asset/?id=10714066964"
+	else
+		fallAnimation.AnimationId = "http://www.roblox.com/asset/?id=180436148"
+		swingAnimation.AnimationId = "http://www.roblox.com/asset/?id=32659699"
+		swingLegsAnimation.AnimationId = "http://www.roblox.com/asset/?id=32659699"
+		shootAnimation.AnimationId = "http://www.roblox.com/asset/?id=128853357"
+		releaseAnimation.AnimationId = "http://www.roblox.com/asset/?id=163209885"	
+		dodgeAnimation.AnimationId = "http://www.roblox.com/asset/?id=178130996"
+		emoteAnimationA.AnimationId = EMOTE_R06_TABLE[1]
+		emoteAnimationB.AnimationId = EMOTE_R06_TABLE[2]
+		emoteAnimationC.AnimationId = EMOTE_R06_TABLE[3]
+		skydiveMainAnimation.AnimationId = "http://www.roblox.com/asset/?id=182749109"
+		skydiveLayerAnimation.AnimationId = "http://www.roblox.com/asset/?id=182749109"
+		hangAnimation.AnimationId = "http://www.roblox.com/asset/?id=5915712534"
+		lookAnimation.AnimationId = "http://www.roblox.com/asset/?id=10714066964"
+		self.swingLegsPosition = 0.4
+	end
+
+	self.fallTrack = humanoid.Animator:LoadAnimation(fallAnimation)
+	self.swingTrack = humanoid.Animator:LoadAnimation(swingAnimation)
+	self.swingLegsTrack = humanoid.Animator:LoadAnimation(swingLegsAnimation)
+	self.shootTrack = humanoid.Animator:LoadAnimation(shootAnimation)
+	self.releaseTrack = humanoid.Animator:LoadAnimation(releaseAnimation)
+	self.dodgeTrack = humanoid.Animator:LoadAnimation(dodgeAnimation)
+	self.emoteTrackA = humanoid.Animator:LoadAnimation(emoteAnimationA)
+	self.emoteTrackB = humanoid.Animator:LoadAnimation(emoteAnimationB)
+	self.emoteTrackC = humanoid.Animator:LoadAnimation(emoteAnimationC)
+	self.skydiveMainTrack = humanoid:LoadAnimation(skydiveMainAnimation)
+	self.skydiveLayerTrack = humanoid:LoadAnimation(skydiveLayerAnimation)
+	self.hangTrack = humanoid:LoadAnimation(hangAnimation)
+	self.lookTrackA = humanoid:LoadAnimation(lookAnimation)
+	self.lookTrackB = humanoid:LoadAnimation(lookAnimation)
+end
+
+
+-- feFlip
+function AnimationController:LongitudinalFlip(signDirection)
+	for i = 1,360 do 
+		task.delay(i/720,function()
+			hrp.CFrame = hrp.CFrame * CFrame.Angles(0,0,signDirection*1/math.deg(1))
+		end)
+	end
+end
+
+
+function AnimationController:LateralFlip(signDirection)
+	for i = 1,360 do 
+		task.delay(i/720,function()
+			hrp.CFrame = hrp.CFrame * CFrame.Angles(-signDirection*1/math.deg(1),0,0)
+		end)
+	end
+end
+
+
+function AnimationController:ChooseFlip()
+    local c, humanoid = PlayerHelper:isAlive()
+	local camera = workspace.CurrentCamera
+
+	local lookVector = camera.CFrame.LookVector
+	--int("Move Direction:", humanoid.MoveDirection)
+	--print(lookVector:Dot(humanoid.MoveDirection))
+
+	local direction = lookVector:Dot(humanoid.MoveDirection)
+	local directionVector = lookVector:Cross(humanoid.MoveDirection)
+
+	local roundedScalarDirection = math.round(direction)
+	local roundedYDirection = math.round(directionVector.Y)
+	Debugging:print("Flip Direction :", direction)
+	Debugging:print("Rounded Direction :", roundedScalarDirection)
+	Debugging:print("directionVector: ", directionVector)
+
+	if PlayerHelper.isLookingForward then
+		if math.abs(directionVector.Y) < ZERO then
+			self:LateralFlip(roundedScalarDirection)
+			Debugging:print("FORWARD OR BACK FLIP")
+		else
+			self:LongitudinalFlip(roundedYDirection)
+			Debugging:print("SIDE FLIP")
+		end
+	else
+		self:LateralFlip(1)
+	end
+end
+
+
+function AnimationController:Slide()
+	for i = 1,360 do 
+		task.delay(i/720,function()
+			hrp.CFrame = hrp.CFrame + humanoid.MoveDirection/30
+		end)
+	end
+end
+
+
+function AnimationController:StopEmotes()
+    self.emoteTrackA:Stop()
+	self.emoteTrackB:Stop()
+	self.emoteTrackC:Stop()
+end
+
+
+function AnimationController:Emote()
+	local animIndex = math.random(1,3)
+	AnimationController:StopEmotes()
+	if animIndex == 1 then
+		print("EMOTEA")
+		self.emoteTrackA:Play(0.2, 100, 2)
+	elseif animIndex == 2 then
+		print("EMOTEB")
+		self.emoteTrackB:Play(0.2, 100, 1)
+	elseif animIndex == 3 then 
+		print("EMOTEC")
+		self.emoteTrackC:Play(0.2, 100, 1)
+	end
+end
+
+
+function AnimationController:Dodge()
+	self:StopEmotes()
+	
+	local rollPosition = 0.29
+	self.dodgeTrack:Play(0.8, 2, 0)
+	self.dodgeTrack.TimePosition = rollPosition
+	task.wait(0.55)
+	self.dodgeTrack:Stop(0.3)
+end
+
+
+function AnimationController:Swing(grip)
+    self.swingTrack:Play(0.2, 0.5, 0)
+	self.swingLegsTrack:Play(0.8, 1.5, 0)
+	--swingTrack:AdjustSpeed(0)
+	self.swingLegsTrack:AdjustSpeed(0)
+
+	self.swingLegsTrack.TimePosition = self.swingLegsPosition
+	
+	local rightPosition = 3
+	local leftPosition = 1
+	
+	if string.match(grip.Name, "Left") then
+		self.swingTrack.TimePosition = leftPosition
+	else
+		self.swingTrack.TimePosition = rightPosition
+	end
+end
+
+
+function AnimationController:ShootWeb(grip)
+	self:StopEmotes()
+
+	local t = 0
+	local rightShootStart = 1.933
+	local rightShootEnd = 2.133
+	local leftShootStart = 2.167
+	local leftshootEnd = 2.4
+	
+	self.shootTrack:Play()
+	self.shootTrack:AdjustSpeed(0)
+	if string.match(grip.Name, "Left") then
+		self.shootTrack.TimePosition = leftShootStart
+		t = leftshootEnd - leftShootStart
+	else
+		self.shootTrack.TimePosition = rightShootStart
+		t = rightShootEnd - rightShootStart
+	end
+
+	self.shootTrack:AdjustSpeed(0.5)
+	task.wait(t)
+	self.shootTrack:Stop(0.8)
+end
+
+
+function AnimationController:Update()
+    local c, humanoid = PlayerHelper:isAlive()
+    local Settings = ControllerConstants:GetSettings()
+
+
+    if PlayerHelper.Pulling or PlayerHelper.Holding or humanoid.Sit then
+        self.lookTrackA:AdjustWeight(0.1)
+		self.lookTrackB:AdjustWeight(0.1*0.5)
+    end
+    
+	if hrp.AssemblyLinearVelocity.Y < -Settings.SKYDIVE_SPEED then
+		--print(hrp.AssemblyLinearVelocity.Y)
+		if not self.skydiveLayerTrack.IsPlaying then
+			self.skydiveLayerTrack:Play(3, 4, 1)
+			self.skydiveMainTrack:Play(4, 4, 0.1)
+            humanoid.Sit = true
+		end
+    end
+    if not self.lookTrackA.IsPlaying then
+		self.lookTrackA:Play(0.2, 1, 0)
+		self.lookTrackB:Play(0.2, 0.5, 0)
+	end
+	self.lookTrackA.TimePosition = Vector.mapToRange(
+		(PlayerHelper.Mouse.UnitRay.Direction * Vector.XZ_VECTOR).Unit:Dot(hrp.CFrame.RightVector),
+		-1,
+		1,
+		18/24,
+		22/24
+	)
+
+    local floorPosition = PlayerHelper:rayCastToFloor()
+    if floorPosition then
+        if (floorPosition.Position - hrp.Position).Magnitude < humanoid.HipHeight and 
+		not PlayerHelper.Dodging and 
+		not PlayerHelper.Pulling and
+		not PlayerHelper.Clicking
+	then
+		humanoid.Sit = false
+		self.emoteTrackC.Looped = false
+		self.emoteTrackC:Play(0.1, 5, 1)
+		self.emoteTrackC.TimePosition = 1 + 1/30
+	end
+	if humanoid.MoveDirection.Magnitude > 0 then
+		self.lookTrackA:AdjustWeight(0.1)
+		self.lookTrackB:AdjustWeight(0.1*0.5)
+		self:StopEmotes()
+	else
+		self.lookTrackA:AdjustWeight(1)
+		self.lookTrackB:AdjustWeight(0.5)
+	end
+    
+	self.lookTrackB.TimePosition = Vector.mapToRange(
+		(PlayerHelper.Mouse.UnitRay.Direction).Unit:Dot(-Vector.UP_VECTOR),
+		-1,
+		1,
+		3+16/24,
+		4+1/24
+	)
+    end
+
+    if PlayerHelper.Climbing then
+		if not AnimationController.climbTrack.IsPlaying then
+			AnimationController.climbTrack:Play(0.1, 5)
+			Debugging:print("Play climb")
+		end
+    else
+        AnimationController.climbTrack:Stop()
+	end
+end
+
+
+return AnimationController]]></ProtectedString>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBX3C34A47189BD46D1A53A96684F9184DD">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">AudioController</string>
+					<string name="ScriptGuid">{E1DD4A9E-A461-4301-85FE-0EAC6870D788}</string>
+					<ProtectedString name="Source"><![CDATA[local feSpiderman = script:FindFirstAncestor("FE-Spiderman")
+local PlayerHelper = require(feSpiderman.PlayerHelper)
+
+local AudioController = {}
+
+local hrp
+
+AudioController.WEB_SHOOT_AUDIO_TABLE = {
+	"rbxassetid://9119459900",
+	"rbxassetid://9119459893",
+	"rbxassetid://9119460959",
+	"rbxassetid://9119460711",
+	"rbxassetid://9119460389",
+	"rbxassetid://9119460972",
+	"rbxassetid://9119460970",
+	"rbxassetid://9119460132",
+	"rbxassetid://9119460421",
+	"rbxassetid://9119460140",
+	"rbxassetid://9119461214",
+}
+
+AudioController.WEB_WHIP_AUDIO_TABLE = {
+	"rbxassetid://9120629319",
+	"rbxassetid://9120629327",
+}
+
+AudioController.WEB_IMPACT_AUDIO_TABLE = {
+	"rbxassetid://9120628387",
+	"rbxassetid://9120628197",
+	"rbxassetid://9120627993",
+	"rbxassetid://9120628153",
+	"rbxassetid://9120628039",
+	"rbxassetid://9120628150",
+	"rbxassetid://9120628323",
+	"rbxassetid://9120628319",
+}
+
+function AudioController:Play()
+
+end
+
+
+function AudioController:PlaySoundAtPart(id, part, volume)
+	part = part or workspace
+	volume = volume or 0.25
+
+	local sound = Instance.new("Sound")
+	sound.SoundId = id
+	sound.Looped = false
+	sound.Volume = volume
+	sound.Parent = part
+	sound.PlayOnRemove = true
+	sound:Destroy()
+end
+
+
+function AudioController:GrabRandomFromTable(tab)
+    return tab[math.random(1, #tab)]
+end
+
+
+function AudioController:Update()
+    local bassSound = hrp.Wind
+	local trebleSound = hrp.Wind2
+	if not bassSound.Playing then
+		bassSound:Play()
+		trebleSound:Play()
+	end
+
+    bassSound.Volume = (hrp.AssemblyLinearVelocity.Magnitude) / 384 + hrp.AssemblyAngularVelocity.Magnitude / 64
+	bassSound.Pitch = hrp.AssemblyLinearVelocity.Magnitude^0.8 / 512 + hrp.AssemblyAngularVelocity.Magnitude / 128
+	trebleSound.Pitch = hrp.AssemblyLinearVelocity.Magnitude^2 / 384^2 + hrp.AssemblyAngularVelocity.Magnitude / 16
+	trebleSound.Volume = hrp.AssemblyLinearVelocity.Magnitude / 2048 + hrp.AssemblyAngularVelocity.Magnitude / 512
+end
+
+
+function AudioController:Init()
+    hrp = PlayerHelper:getCharacterHumanoidRootPart()
+
+    local windSound = hrp:FindFirstChild("Wind") or Instance.new("Sound")
+	if windSound.Name ~= "Wind" then
+		windSound.SoundId = "rbxassetid://9118747525"
+		windSound.Volume = 0
+		windSound.Pitch = 1
+		windSound.Looped = true
+		windSound.Name = "Wind"
+		windSound.Parent = hrp
+	end
+
+	local windDetailedSound = hrp:FindFirstChild("Wind2") or Instance.new("Sound")
+	if windDetailedSound.Name ~= "Wind2" then
+		windDetailedSound.SoundId = "rbxassetid://5113213873"
+		windDetailedSound.Volume = 0
+		windDetailedSound.Pitch = 1
+		windDetailedSound.Looped = true
+		windDetailedSound.Name = "Wind2"
+		windDetailedSound.Parent = hrp
+	end
+
+	local windReverb = windSound:FindFirstChild("Reverb") or Instance.new("ReverbSoundEffect")
+	if windReverb.Name ~= "Reverb" then
+		windReverb.Name = "Reverb"
+		windReverb.Diffusion = 0
+		windReverb.WetLevel = 10
+		windReverb.DecayTime = 8
+		windReverb.Parent = windSound
+	end
+	local windDetailedReverb = windDetailedSound:FindFirstChild("ReverbDetailed") or Instance.new("ReverbSoundEffect")
+	if windDetailedReverb.Name ~= "ReverbDetailed" then
+		windDetailedReverb.Name = "ReverbDetailed"
+		windDetailedReverb.Density = 0.5
+		windDetailedReverb.Diffusion = 1
+		windDetailedReverb.WetLevel = 6
+		windDetailedReverb.DecayTime = 8
+		windDetailedReverb.Parent = windDetailedSound
+	end
+	local windDetailedEqual = windDetailedSound:FindFirstChild("EqualDetailed") or Instance.new("EqualizerSoundEffect")
+	if windDetailedEqual.Name ~= "EqualDetailed" then
+		windDetailedEqual.Name = "EqualDetailed"
+		windDetailedEqual.MidGain = 5
+		windDetailedEqual.LowGain = -10
+		windDetailedEqual.HighGain = 10
+		windDetailedEqual.Parent = windDetailedSound
+	end
+end
+
+return AudioController]]></ProtectedString>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBX5EF1D1FAC6534510B61DA91A055F941C">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">CameraController</string>
+					<string name="ScriptGuid">{D2FB3629-4049-46CB-B7F0-581C946241A1}</string>
+					<ProtectedString name="Source"><![CDATA[local feSpiderman = script:FindFirstAncestor("FE-Spiderman")
+local PlayerHelper = require(feSpiderman.PlayerHelper)
+local Spring = require(feSpiderman.Spring)
+
+local ControllerConstants = require(feSpiderman.Controllers.ControllerConstants)
+
+local CameraController = {}
+
+CameraController.isCameraToggled = false
+
+local pointLookVector = Vector3.new()
+local cameraOffset = Vector3.new()
+
+local Settings = ControllerConstants:GetSettings()
+
+local velSpring = Spring.new(Settings.CAM_RESPONSIVENESS*1.5, Vector3.new())
+local panSpring = Spring.new(Settings.CAM_RESPONSIVENESS, Vector3.new())
+local zoomSpring = Spring.new(1, Vector3.new())
+
+local fastTween = require(feSpiderman.FastTween)
+
+
+CameraController.mouseVector = Vector3.new()
+CameraController.distance = nil
+
+function CameraController:UpdateDistance(scrollDelta)
+    local Settings = ControllerConstants:GetSettings()
+
+	CameraController.distance -= scrollDelta * Settings.DOLLY_SPEED * 330 
+	CameraController.distance = math.clamp(CameraController.distance, Settings.CAM_MIN_DISTANCE, Settings.CAM_MAX_DISTANCE)
+end
+
+
+function CameraController:TweenFOV(targetFOV, tweenLength)
+	tweenLength = tweenLength or 0.2
+	local tweenInfo = { tweenLength, Enum.EasingStyle.Quad, Enum.EasingDirection.In }
+	local camera = workspace.Camera
+
+	local tween = fastTween(camera, tweenInfo, {FieldOfView = targetFOV})
+
+	tween:Play()
+	tween.Completed:Connect(function()
+		tween:Destroy()
+	end)
+end
+
+
+function CameraController:ToggleCamera()
+    CameraController.isCameraToggled = not CameraController.isCameraToggled
+end
+
+
+function CameraController.Update(dt)
+	local character = PlayerHelper:isAlive()
+	if not character then return end
+	local hrp = PlayerHelper:getCharacterHumanoidRootPart()
+	local camera = workspace.CurrentCamera
+
+    local Settings = ControllerConstants:GetSettings()
+
+	local newCFrame = nil
+	local newFocus = nil
+    local displacement = camera.CFrame.Position - hrp.Position
+	local focusedPoint = Vector3.new()
+	local orientation = hrp:FindFirstChild("FaceForward")
+
+	if PlayerHelper.Holding then
+		focusedPoint = PlayerHelper.attachedPoint.WorldPosition
+		focusedPoint = focusedPoint - hrp.CFrame.Position
+		velSpring.f = Settings.CAM_RESPONSIVENESS*2
+		panSpring.f = Settings.CAM_RESPONSIVENESS*6
+		if orientation then
+			orientation.Enabled = false	
+		end
+	elseif PlayerHelper.Falling then
+		velSpring.f = Settings.CAM_RESPONSIVENESS*2
+		panSpring.f = Settings.CAM_RESPONSIVENESS*3
+	else
+		velSpring.f = Settings.CAM_RESPONSIVENESS
+		panSpring.f = Settings.CAM_RESPONSIVENESS*2
+		if orientation then
+			orientation.Enabled = PlayerHelper.isLookingForward	
+		end
+	end
+
+	if PlayerHelper.Climbing then
+		focusedPoint = PlayerHelper.ClimbFocus
+		focusedPoint = focusedPoint - hrp.CFrame.Position
+		velSpring.f = Settings.CAM_RESPONSIVENESS*3
+		panSpring.f = Settings.CAM_RESPONSIVENESS*4
+	end
+
+	if camera.CameraType == Enum.CameraType.Custom then
+		local distance = displacement.Magnitude
+		distance = math.clamp(distance, Settings.CAM_MIN_DISTANCE, Settings.CAM_MAX_DISTANCE)
+		zoomSpring:Reset(distance)
+		panSpring:Reset(hrp.CFrame.Position)
+		pointLookVector = hrp.CFrame.Position + Vector3.new(0,5,0)
+		cameraOffset = Vector3.new(0, 5, CameraController.distance)
+		CameraController.distance = distance
+		camera.CameraType = Enum.CameraType.Scriptable
+	end
+
+	local transformedMouseVector = camera.CFrame:VectorToWorldSpace(CameraController.mouseVector)
+
+	local newDistance = zoomSpring:Update(dt, CameraController.distance)
+	local newDisplacement = displacement.Unit*newDistance 
+	- (transformedMouseVector 
+		* Vector3.new(0.8, 1.5, 0.8))
+
+	local newPos = hrp.CFrame.Position + Vector3.new(0,2,0) + newDisplacement--CFrame.new(hrp.CFrame.Position):PointToWorldSpace(newDisplacement)
+	local newPointLook = hrp.CFrame.Position 
+		+ Vector3.new(0,5,0) 
+		+ focusedPoint * Settings.FOCUS_POINT_BIAS
+		+ hrp.AssemblyLinearVelocity/50
+
+	pointLookVector = panSpring:Update(dt, newPointLook)
+	cameraOffset = velSpring:Update(dt, newPos)
+
+	newCFrame = CFrame.lookAt(cameraOffset, pointLookVector)
+
+	if PlayerHelper.isLookingForward and orientation then
+		--d_print("Facing forward")
+		orientation.CFrame = CFrame.lookAt(hrp.Position, hrp.Position+camera.CFrame.LookVector)
+		--print(orientation.PrimaryAxis)
+	end
+
+	camera.CFrame = newCFrame
+	--camera.Focus = newFocus
+end
+
+
+return CameraController]]></ProtectedString>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBX5EE843F666F8419C8F16653029F8CCA6">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">ControllerConstants</string>
+					<string name="ScriptGuid">{AC2FF731-F94C-4D91-86D9-25FD03A5F6AA}</string>
+					<ProtectedString name="Source"><![CDATA[local ControllerConstants = {}
+
+local Settings = {}
+
+function ControllerConstants:SetSettings(settings)
+    Settings = settings
+end
+
+function ControllerConstants:GetSettings()
+    return Settings
+end    
+
+return ControllerConstants]]></ProtectedString>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBX37A24909FA604DD6895348249167E385">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">PlayerController</string>
+					<string name="ScriptGuid">{E27037CF-3821-4D8D-BF74-EBDEDB9C01EE}</string>
+					<ProtectedString name="Source"><![CDATA[local feSpiderman = script:FindFirstAncestor("FE-Spiderman")
+local Debugging = require(feSpiderman.Debugging)
+
+local AnimationController =  require(feSpiderman.Controllers.AnimationController)
+local ActionHandler = require(feSpiderman.Controllers.ActionHandler)
+local AudioController = require(feSpiderman.Controllers.AudioController)
+local ControllerConstants = require(feSpiderman.Controllers.ControllerConstants)
+local CameraController = require(feSpiderman.Controllers.CameraController)
+local PlayerHelper = require(feSpiderman.PlayerHelper)
+
+local Vector = require(feSpiderman.Vector)
+
+local Debris = game:GetService("Debris")
+
+local PlayerController = {}
+
+PlayerController.dragStrength = 1
+PlayerController.grip = nil
+PlayerController.climbable = nil
+
+local dodgeDebounce = false
+local connected = false
+
+local DT = 0.01
+local ZERO = 1e-6
+
+local ClickBeganEvent, ClickEndedEvent
+
+local rightHand = {"Right Arm", "RightHand"}
+local leftHand = {"Left Arm", "LeftHand"}
+local gripAttachments = {
+	["Right Arm"] = "RightGripAttachment", 
+	["RightHand"] = "RightGripAttachment", 
+	["Left Arm"] = "LeftGripAttachment",
+	["LeftHand"] = "LeftGripAttachment"
+}
+
+local raycastParams = RaycastParams.new()
+raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+raycastParams.IgnoreWater = true
+
+
+local function disableClimbForDuration(t, t_delay)
+    local Settings = ControllerConstants:GetSettings()
+
+	if t_delay then
+		task.wait(t_delay)
+	end
+	Debugging:print("climb disabled : ", PlayerHelper.canClimb)
+	PlayerHelper.canClimb = false
+	task.wait(t)
+	PlayerHelper.canClimb = ActionHandler:isKeyDownBool(Settings.ClimbingButton)
+	PlayerController:ControlClimbing()
+	Debugging:print("climb enabled : ", PlayerHelper.canClimb)
+end
+
+local function sit()
+	local c, humanoid = PlayerHelper:isAlive()
+
+	humanoid.Sit = true
+end
+
+
+local function stand()
+	local c, humanoid = PlayerHelper:isAlive()
+
+	humanoid.Sit = false
+end
+
+
+local function getDistanceFromFloor()
+	local hrp = PlayerHelper:getCharacterHumanoidRootPart()
+
+	local P0 = hrp.Position
+
+	local result = PlayerHelper:rayCastToFloor()
+
+	if result then
+		local P1 = result.Position
+		return (P1 - P0).Magnitude
+	else
+		return math.huge
+	end
+end
+
+
+local function rollPct(n)
+	return math.random(0, 100) < n 
+end
+
+
+local function attachToPart(climbable, climbingPosition)
+	local c, humanoid = PlayerHelper:isAlive()
+    local Settings = ControllerConstants:GetSettings()
+	local camera = workspace.CurrentCamera
+	local hrp = PlayerHelper:getCharacterHumanoidRootPart()
+	--d_print("Attachment0")
+
+	local climbingPosition = hrp.ClimbAlignPos
+	local climbingOrientationA = hrp.ClimbAlignWall
+	local climbingOrientationB = hrp.ClimbAlignRot
+
+	local climbingAttachment1 = climbable.Instance:FindFirstChild("Climb1") or Instance.new("Attachment")
+	if climbingAttachment1.Name ~= "Climb1" then
+		climbingAttachment1.Name = "Climb1"
+		climbingAttachment1.Visible = Debugging.DEBUG
+		climbingAttachment1.Parent = climbable.Instance
+	end
+
+	local angle = math.acos(Vector.getVectorPairCos(climbable.Normal, Vector.UP_VECTOR))
+	local wallMoveDirection = Vector.rotateVectorAlongAxis(humanoid.MoveDirection, angle, hrp.CFrame.RightVector)
+
+	-- Control climbingAttachment1 to moves
+	-- Attempt to rotate humanoid move direction to the wall normal by component
+	local wallUpAndDownDirection = -humanoid.MoveDirection:Cross(Vector.UP_VECTOR):Cross(climbable.Normal)
+	local wallLeftAndRightDirection = climbable.Normal:Cross(humanoid.MoveDirection):Cross(climbable.Normal)
+
+	--local wallMoveDirection = wallUpAndDownDirection + wallLeftAndRightDirection*XZ_VECTOR
+
+	if not PlayerHelper.Climbing then
+		climbingAttachment1.WorldPosition = climbable.Position		
+	end
+
+	climbingPosition.Attachment1 = climbingAttachment1
+	climbingPosition.Enabled = true
+
+	local xVector
+	if wallMoveDirection.Magnitude > 0 then
+		xVector = wallMoveDirection:Cross(climbable.Normal)
+	else
+		xVector = hrp.CFrame.RightVector
+	end
+
+	Debugging:makePartAt(hrp.Position, 0.1, Vector3.new(0.1,0.1,12), Color3.new(0, 1, 0), xVector.Unit)
+	Debugging:makePartAt(hrp.Position, 0.1, Vector3.new(0.1,0.1,12), Color3.new(1, 0, 0), wallMoveDirection.Unit)
+
+	local angleCFrame = CFrame.fromMatrix(hrp.Position, xVector.Unit, wallMoveDirection.Unit)
+
+	climbingOrientationA.CFrame = CFrame.lookAt(angleCFrame.Position, hrp.Position-climbable.Normal*5)
+	climbingOrientationA.Enabled = true
+
+	--hrp.CFrame = CFrame.fromMatrix(hrp.Position, xVector, wallMoveDirection*16)
+	climbingOrientationB.Enabled = true
+
+	climbingAttachment1.WorldPosition += wallMoveDirection*humanoid.WalkSpeed / Settings.initialWalkspeed * Settings.CLIMB_SPEED
+	PlayerHelper.ClimbFocus = climbingAttachment1.WorldPosition + wallMoveDirection*4
+
+    AnimationController.climbTrack:AdjustSpeed(Vector.isPosOrNeg(wallMoveDirection) * humanoid.WalkSpeed / Settings.initialWalkspeed * 1.5)
+end
+
+
+local function distanceFromTorso(character, hitCFrame)
+	local torso = character:FindFirstChild("Torso") or character:FindFirstChild("UpperTorso")
+
+	return torso.Position - hitCFrame.Position
+end
+
+
+local function chooseHand(character, disp)
+	local hand 
+
+	local torso = character:FindFirstChild("Torso") or character:FindFirstChild("UpperTorso")
+	local rightVector = torso.CFrame.RightVector
+
+	-- lookvector is just the negative of the torso z-component, rightvector negative here
+	if -rightVector:Dot(disp) > ZERO then
+		hand = rightHand
+	else
+		hand = leftHand
+	end
+
+	return hand
+end
+
+
+local function destroyWebs(endPoint, rope)
+	local hrp = PlayerHelper:getCharacterHumanoidRootPart()
+
+    local TweenService = game:GetService("TweenService")
+
+	local residueAttachment = Instance.new("Attachment")
+	residueAttachment.Name = "ResidueAttachment"
+	residueAttachment.Parent = endPoint.Parent
+	residueAttachment.WorldPosition = PlayerController.grip.WorldPosition
+
+	local residueInfo = TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.In, 0, false, 0)
+	local propTab = {WorldPosition = PlayerController.grip.WorldPosition + hrp.AssemblyLinearVelocity}
+	local residueMovement = TweenService:Create(residueAttachment, residueInfo, propTab)
+
+	if rope then
+		hrp[rope]:Destroy()
+		local web = hrp:FindFirstChild("RightWeb") or hrp:FindFirstChild("LeftWeb")
+		if web then 
+            web:Destroy() 
+        end
+		return
+	end
+	--d_print("Deleting everything else")
+	for i,v in ipairs(hrp:GetChildren()) do
+		if v.Name == "RightRope" or v.Name == "LeftRope" or v.Name == "Web" or v.Name == "LeftWeb" or v.Name == "RightWeb" then
+			v.Attachment0 = residueAttachment
+			residueMovement:Play()
+			Debris:AddItem(v, 1)
+			Debris:AddItem(residueMovement, 1)
+		end
+	end
+end
+
+
+
+-- Pull towards a position 
+-- Sit, then apply vectorforce
+local function pullTowardsWeb(endPoint, grip)
+	local character = PlayerHelper:isAlive()
+	if not character then return end
+
+    local Settings = ControllerConstants:GetSettings()
+
+    --d_print("Pulling towards web")
+	local characterVelocity
+
+	local hrp = PlayerHelper:getCharacterHumanoidRootPart()
+
+	local webVector = endPoint.WorldPosition - grip.WorldPosition
+
+
+	local ropeLength = webVector.magnitude/0.5
+
+
+
+	sit()
+	task.spawn(disableClimbForDuration, Settings.PULL_TIME / 4, 0.1)
+	task.wait(Settings.PULL_TIME / 4)
+	hrp:ApplyImpulse(webVector.Unit*ropeLength * Settings.WEB_STRENGTH / 11000)
+	PlayerController.dragStrength = Settings.HOLDING_DRAG_STRENGTH
+	PlayerHelper.Pulling = false
+
+	task.wait(1/2)
+	destroyWebs(endPoint)
+	Debris:AddItem(endPoint.Parent, 1)
+	PlayerHelper.dragStrength = Settings.FALLING_DRAG_STRENGTH
+end
+
+
+local function setGravity(gravity)
+	if gravity then 
+        workspace.Gravity = gravity 
+        return 
+    end
+	local character = PlayerHelper:isAlive()
+	local hrp = PlayerHelper:getCharacterHumanoidRootPart()
+	if not hrp then return end
+end
+
+
+local function resetGravity()
+    local Settings = ControllerConstants:GetSettings()
+	workspace.Gravity = 196.2 / Settings.ANTIGRAV_MAGNITUDE
+end
+
+
+
+-- WEB FUNCTIONS --------------------------------------
+local function setWebProperties(web)
+	local beam = web
+
+	beam.Color = ColorSequence.new({
+		ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)), -- red
+		ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)), -- green
+		ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255)), -- blue
+	}
+	)
+	beam.LightEmission = 1 -- use additive blending
+	beam.LightInfluence = 0.5 -- beam not influenced by light
+	beam.Texture = "rbxasset://textures/particles/sparkles_main.dds" -- a built in sparkle texture
+	beam.TextureMode = Enum.TextureMode.Wrap -- wrap so length can be set by TextureLength
+	beam.TextureLength = 0.05 -- repeating texture is 1 stud long 
+	beam.TextureSpeed = 0 -- slow texture speed
+	beam.Transparency = NumberSequence.new({ -- beam fades out at the end
+		NumberSequenceKeypoint.new(0, 0),
+		NumberSequenceKeypoint.new(0.8, 0),
+		NumberSequenceKeypoint.new(1, 0)
+	}
+	)
+	beam.ZOffset = 0 -- render at the position of the beam without offset 
+
+	-- shape properties
+	beam.CurveSize0 = -4 -- create a curved beam
+	beam.CurveSize1 = 1 -- create a curved beam
+	beam.FaceCamera = true -- beam is visible from every angle 
+	beam.Segments = 10 -- default curve resolution  
+	beam.Width0 = 0.1 -- starts small
+	beam.Width1 = 2 -- ends big
+
+	beam.Enabled = true
+
+	--d_print("Beam properties set")
+	return beam
+end
+
+
+local function createWebRope(cf, handPart, grip)
+	local limitDistance -- Account for animation delay
+	local web
+
+	--d_print(handPart)
+	a0 = grip
+
+	local a1 = Instance.new("Attachment")
+	local a1Anchor = Instance.new("Part")
+
+	a1Anchor.Size = Vector3.new(0.5, 0.5, 0.5)
+	a1Anchor.Anchored = true
+	a1Anchor.CFrame = cf
+	a1Anchor.Transparency = 0
+	a1Anchor.CanCollide = false
+	a1Anchor.Parent = workspace
+	a1Anchor.Name = "anchorPart"
+
+	local soundId = AudioController:GrabRandomFromTable(AudioController.WEB_IMPACT_AUDIO_TABLE)
+	AudioController:PlaySoundAtPart(soundId, a1Anchor)
+
+	local overlapParams = OverlapParams.new()
+	overlapParams.FilterDescendantsInstances = {a1Anchor}
+	overlapParams.FilterType = Enum.RaycastFilterType.Blacklist
+	local touchingPart = workspace:GetPartBoundsInBox(cf, Vector3.new(0.1, 0.1, 0.1), overlapParams)
+	if #touchingPart > 0 then
+		local weld = Instance.new("WeldConstraint")
+		a1Anchor.Anchored = false
+		touchingPart = touchingPart[1]
+		Debugging:print(touchingPart.Name)
+		weld.Part0 = a1Anchor
+		weld.Part1 = touchingPart
+		weld.Enabled = true
+		weld.Parent = a1Anchor
+	else
+		a1Anchor.Anchored = true
+	end
+	for i, part in ipairs(a1Anchor:GetTouchingParts()) do
+		Debugging:print(part.Name)
+	end
+	--d_print(a1Anchor.CFrame.LookVector)
+
+	--a1.WorldPosition = cf.Position
+	a1.Parent = a1Anchor
+
+	web = Instance.new("Beam")
+	web.Name = "Web"
+	web.Attachment0 = a0
+	web.Attachment1 = a1
+	--d_print("attempting web properties")
+	web = setWebProperties(web)
+
+	if string.find(grip.Name, "Right") then
+		web.Name = "RightWeb"
+	elseif string.find(grip.Name, "Left") then
+		web.Name = "LeftWeb"
+	end
+
+	--d_print("Web located at "..tostring(cf.Position))
+
+	limitDistance = (a1.WorldPosition - a0.WorldPosition).magnitude
+	--d_print(a0.WorldPosition)
+	--d_print(a1.WorldPosition)
+	--d_print(limitDistance)
+
+	return web, limitDistance, a1
+end
+
+
+local function iterDetermineOffset(locale, offset, result, camera)
+    local Settings = ControllerConstants:GetSettings()
+
+	if math.abs(camera.CFrame.Position.Y - (locale).Y) < Settings.AUTO_DISTANCE and n <= 100 then
+		local result0 = workspace:Raycast(locale, -result.Normal, raycastParams)	
+		if result0 then
+			Debugging:print("Increase distance: ", locale)
+			n = n + 1
+			Debugging:makePartAt(locale, 60)
+			locale = iterDetermineOffset(locale+offset, offset*Vector.INCREASE_VECTOR, result0, camera)
+		else
+			Debugging:print("Decrease distance: ", locale)
+			n = n + 1
+			Debugging:makePartAt(locale, 60)
+			locale = iterDetermineOffset(locale-offset, offset*Vector.DECREASE_VECTOR, result, camera)
+		end			
+	else
+		return locale
+	end
+end
+
+
+local function determineWebLocale(result, camera)
+	local webLocale
+
+	local instance = result.Instance
+	--d_print(result.Normal)
+	local y_max = instance.Position.Y + (instance.Size.Y / 10)
+	local y_offset = 0.8*y_max
+	local offset
+
+	local forwardVector = result.Normal:Cross(Vector.UP_VECTOR)
+	local offset = (forwardVector.Unit * camera.CFrame.LookVector:Dot(forwardVector)) * 100
+
+	n = 0
+	webLocale = Vector3.new(result.Position.x, y_offset, result.Position.z) + offset
+	Debugging:print("Old Locale: ", webLocale)
+	local newLocale = iterDetermineOffset(webLocale, offset, result, camera)
+
+	Debugging:print("Final Locale: ", webLocale)
+
+	webLocale = CFrame.new(webLocale)
+
+	return webLocale
+end
+
+
+local function closestResultFromOrigin(r1, r2, origin)
+	if r1 and not r2 then
+		return r1
+	elseif r2 and not r1 then
+		return r2
+	end
+
+	if (r1.Position - origin).Magnitude < (r2.Position - origin).Magnitude then
+		return r1
+	elseif (r2.Position - origin).Magnitude < (r1.Position - origin).Magnitude then
+		return r2
+	else
+		return 0
+	end
+end
+
+
+local function rayCastLocale(character, camera)
+	local webLocale
+
+    local Settings = ControllerConstants:GetSettings()
+
+	local hrp = character:FindFirstChild("HumanoidRootPart")
+	local origin = hrp.Position + (8 * Vector.UP_VECTOR)
+	local rightVector = camera.CFrame.RightVector
+	local leftVector = -rightVector
+	local lookVector = camera.CFrame.LookVector
+
+	local rightBias = Settings.WEB_MAX_DISTANCE*(rightVector+0.2*lookVector).Unit
+	local leftBias = Settings.WEB_MAX_DISTANCE*(leftVector+0.2*lookVector).Unit
+
+	raycastParams.FilterDescendantsInstances = {character}
+
+	local rightResult = workspace:Raycast(origin, rightBias, raycastParams)
+	local leftResult = workspace:Raycast(origin, leftBias, raycastParams)
+
+	Debugging:makePartAt(origin, 3, Vector3.new(1, 1, Settings.WEB_MAX_DISTANCE), Color3.new(1, 1, 0), rightBias.Unit)
+	Debugging:makePartAt(origin, 3, Vector3.new(1, 1, Settings.WEB_MAX_DISTANCE), Color3.new(0, 1, 1), leftBias.Unit)
+
+	Debugging:print(rightResult)
+	Debugging:print(leftResult)
+
+	if not (leftResult and rightResult) then 
+        return PlayerHelper.Mouse.Hit 
+    end
+
+	local result = closestResultFromOrigin(rightResult, leftResult, origin)
+
+	webLocale = determineWebLocale(result, camera)
+
+	return webLocale
+end
+
+
+--[[
+The method below uses the rope swinging physics pioneered by Jamie Fristrom
+https://gamedevelopment.tutsplus.com/tutorials/swinging-physics-for-player-movement-as-seen-in-spider-man-2-and-energy-hook--gamedev-8782
+]]
+local function holdRope3(endPoint, grip)
+	local character = PlayerHelper:isAlive()
+	if not character then 
+        PlayerHelper.Holding = false 
+        return 
+    end
+	local hrp = PlayerHelper:getCharacterHumanoidRootPart()
+
+    local Settings = ControllerConstants:GetSettings()
+
+	PlayerHelper.attachedPoint = endPoint
+
+	PlayerHelper.Holding = true
+	PlayerHelper.Pulling = false
+	PlayerHelper.Falling = false
+	PlayerHelper.dragStrength = Settings.HOLDING_DRAG_STRENGTH
+
+	local mass = PlayerHelper:getCharacterMass()
+
+	local distanceFromFloor = getDistanceFromFloor()
+	local ropeVector = hrp.CFrame.Position - endPoint.WorldCFrame.Position
+	local ropeLength = ropeVector.Magnitude
+	local desiredLength = ropeLength / Settings.TAUT_MAGNITUDE - 128/distanceFromFloor
+	desiredLength = math.clamp(desiredLength, ropeLength/Settings.TAUT_MAGNITUDE, math.huge)
+	local tautTime = Settings.TAUT_TIME - 4/distanceFromFloor^2
+	--print(128/distanceFromFloor)
+	local t = 0
+	local dt = 0
+	local alpha = dt
+
+	local currentPos
+	local oldPos
+	local oldVel
+	local newPos
+	local setPos
+	local newVel
+	local in_min = 0
+	local in_max = 0
+
+	setGravity()
+	local gravityForce = hrp:FindFirstChild("Gravity")
+	setGravity(0)
+	sit()
+
+	local tensionForce = hrp.Tension
+	local adjustmentVelocity = hrp.Adjustment
+	local upsideDown = hrp.UpsideDown
+
+	tensionForce.Enabled = false
+	AnimationController:Swing(grip)
+	--d_print("Start hold")
+	while PlayerHelper.Holding do
+		oldPos = hrp.CFrame
+		oldVel = hrp.AssemblyLinearVelocity
+		dt = task.wait(DT)
+		currentPos =  hrp.CFrame - endPoint.WorldCFrame.Position
+		--d_print(ropeLength)
+		--d_print(currentPos.Position.Magnitude)
+		alpha = alpha + dt
+		ropeLength += (desiredLength - ropeLength)*dt/tautTime
+		
+		local dispToEndpoint = (currentPos.Position * Vector.XZ_VECTOR).Magnitude 
+			* hrp.CFrame.LookVector:Dot(currentPos.Position.Unit * Vector.XZ_VECTOR)
+		if in_min == 0 or in_max == 0 then
+			in_min = dispToEndpoint
+			in_max = -in_min
+		end
+		AnimationController.swingTrack.TimePosition = Vector.mapToRange(
+			dispToEndpoint,
+			in_min,
+			in_max,
+			1/3,
+			1/2
+		)
+
+        if ActionHandler:isKeyDownBool(Settings.HangButton) then
+			AnimationController.hangTrack:Play(0.1, 500, 0)
+			PlayerHelper.Hanging = not PlayerHelper.Hanging
+			upsideDown.Enabled = true
+		end
+		
+		if PlayerHelper.Hanging then
+			upsideDown.CFrame = CFrame.fromOrientation(hrp.Orientation.X, hrp.Orientation.Y, 180)
+			desiredLength += Vector.bool_to_number(PlayerHelper.Hanging)
+		else
+			desiredLength = math.clamp(desiredLength, ropeLength / Settings.TAUT_MAGNITUDE, math.huge)
+		end
+		
+		if currentPos.Position.Magnitude > ropeLength then
+			newPos = hrp.CFrame - endPoint.WorldCFrame.Position
+			currentPos = newPos.Position.Unit * ropeLength
+			--d_print("new current position")
+			setPos = CFrame.new(currentPos):ToWorldSpace(endPoint.WorldCFrame)
+			--hrp.CFrame = CFrame.fromMatrix(setPos.Position, hrp.CFrame.XVector, -currentPos.Unit)
+			--d_print("Setting Velocity")
+			if upsideDown.Enabled then
+				hrp.CFrame = CFrame.fromMatrix(setPos.Position, setPos.XVector, currentPos.Unit)
+			else
+				hrp.CFrame = CFrame.fromMatrix(setPos.Position, setPos.XVector, -currentPos.Unit)
+					* CFrame.fromOrientation(0,0,-math.asin(Vector.getVectorPairCos(setPos.XVector, -currentPos.Unit)))
+			end
+			newVel = (oldPos.Position - setPos.Position)/dt
+
+			tensionForce.Force = -currentPos.Unit * (mass*newVel.Magnitude^2/desiredLength + gravityForce.Force.Magnitude)*1.2
+
+			if Debugging.DEBUG then
+				Debugging:makePartAt(hrp.Position, 0.1, Vector3.new(0.01,0.01,Vector.WEB_MAX_DISTANCE), Color3.new(1, 1, 0), tensionForce.Force.Unit)
+			end
+
+			adjustmentVelocity.VectorVelocity = newVel
+			--d_print(hrp.AssemblyLinearVelocity.Magnitude)
+			tensionForce.Enabled = true
+			gravityForce.Enabled = true
+			adjustmentVelocity.Enabled = false
+		else
+			hrp.CFrame = hrp.CFrame
+			tensionForce.Enabled = false
+			gravityForce.Enabled = true
+			adjustmentVelocity.Enabled = false
+		end 
+	end
+
+	task.wait()
+	AnimationController.swingTrack:Stop(0.3)
+	AnimationController.swingLegsTrack:Stop(0.3)
+	AnimationController.hangTrack:Stop(0.1)
+	--d_print("End hold")
+	tensionForce.Enabled = false
+	adjustmentVelocity.Enabled = false
+	upsideDown.Enabled = false
+	gravityForce.Enabled = false
+	PlayerHelper.Hanging = false
+	resetGravity()
+	Debris:AddItem(endPoint.Parent, 3)
+end
+
+
+local function webAction(endPoint, grip)
+	task.wait(1/9)
+	if PlayerHelper.Clicking then
+		--holdWeb(endPoint, grip)
+		-- The coroutine exists to allow web-swinging with two hands
+		-- Might figure this one later.
+		local f = coroutine.wrap(holdRope3)
+		local result = f(endPoint, grip)
+	else
+		pullTowardsWeb(endPoint, grip)
+	end
+end
+
+
+
+function PlayerController:WebShoot(hand)
+	PlayerHelper.Clicking = true
+	local character = PlayerHelper.isAlive()
+	if not PlayerHelper.websEnabled or not character then return end
+	local webSpot
+	local camera = workspace.Camera
+
+    local Settings = ControllerConstants:GetSettings()
+
+	if PlayerHelper.isAutomatic then
+		webSpot = rayCastLocale(character, camera)
+	else
+		webSpot = PlayerHelper.Mouse.Hit
+	end
+
+	local web
+	local limitDist
+	local endPoint
+
+	local torsoDistance = distanceFromTorso(character, webSpot)
+
+	--d_print("Distance from torso: " .. tostring(torsoDistance.magnitude))
+
+	if torsoDistance.magnitude <= Settings.WEB_MAX_DISTANCE then
+		local hand = hand or chooseHand(character, torsoDistance)
+		local handPart = character:FindFirstChild(hand[1]) or character:FindFirstChild(hand[2])
+		local grip = handPart[gripAttachments[handPart.Name]]
+		PlayerController.grip = grip
+		--d_print(grip)
+		PlayerHelper.Pulling = true
+
+		local soundId = AudioController:GrabRandomFromTable(AudioController.WEB_SHOOT_AUDIO_TABLE)
+
+		AudioController:PlaySoundAtPart(soundId, handPart, 0.1)
+		AnimationController:ShootWeb(grip)
+		web, limitDist, endPoint = createWebRope(webSpot, handPart, grip)
+		web.Parent = PlayerHelper:getCharacterHumanoidRootPart()
+		if limitDist <= Settings.WEB_MAX_DISTANCE then --For animation delay
+            PlayerHelper.Pulling = false
+			--d_print("Webs")
+			webAction(endPoint, grip)
+		else
+			web:Destroy()
+		end
+	end
+end
+
+
+-- stop holding onto web
+function PlayerController:ReleaseWeb(rope)
+	PlayerHelper.Holding = false
+	PlayerHelper.Clicking = false
+	--print(Pulling)
+	local character = PlayerHelper:isAlive()
+	if not character then return end
+	if PlayerHelper.Pulling then return end
+	local hrp = PlayerHelper:getCharacterHumanoidRootPart()
+
+	local Settings = ControllerConstants:GetSettings()
+
+	local willFlip = rollPct(Settings.FLIP_CHANCE)
+
+	--print(hrp.AssemblyLinearVelocity.Magnitude)
+	if hrp.AssemblyLinearVelocity.Magnitude > 250 then
+		AnimationController.emoteTrackC:Play(0.02, 5, 0)
+		AnimationController.emoteTrackC.TimePosition = AnimationController.pullPosition
+		AnimationController.releaseTrack:AdjustSpeed(0.05)
+	else
+		AnimationController.releaseTrack:Play(0.3, 1, 0)
+		AnimationController.releaseTrack.TimePosition = 0.333
+		AnimationController.releaseTrack:AdjustSpeed(0.05)
+	end
+
+	local soundId = AudioController:GrabRandomFromTable(AudioController.WEB_WHIP_AUDIO_TABLE)
+
+	AudioController:PlaySoundAtPart(soundId, hrp, 0.01)
+
+	if willFlip and AnimationController.releaseTrack.IsPlaying then
+		AnimationController:LateralFlip(-1)
+	elseif not willFlip and AnimationController.releaseTrack.IsPlaying then
+		AnimationController:LateralFlip(-0.5)	
+	else
+		AnimationController:LateralFlip(0.3)
+	end
+
+	task.wait()
+
+	destroyWebs(PlayerHelper.attachedPoint, rope)
+
+	task.wait(0.3)
+	AnimationController.releaseTrack:Stop(0.5)
+	AnimationController.emoteTrackC:Stop(0.5)
+end
+
+
+function PlayerController:Dodge()
+    dodgeDebounce = true
+    sit()
+    AnimationController:Slide()
+    AnimationController:ChooseFlip()
+    AnimationController:Dodge()
+    Debugging:print("FLIP")
+    stand()
+    dodgeDebounce = false
+    PlayerHelper.Dodging = false
+end
+
+
+function PlayerController:AutoRotate()
+	local c, humanoid = PlayerHelper:isAlive()
+
+	humanoid.AutoRotate = not PlayerHelper.isLookingForward
+	local orientation = PlayerHelper:getCharacterHumanoidRootPart():FindFirstChild("FaceForward")
+    orientation.Enabled = PlayerHelper.isLookingForward
+end
+
+
+local function rayCastToPart(part, length)
+	local hrp = PlayerHelper:getCharacterHumanoidRootPart()
+
+	local raycastParams = RaycastParams.new()
+	raycastParams.FilterType = Enum.RaycastFilterType.Whitelist
+	raycastParams.IgnoreWater = true
+	raycastParams.FilterDescendantsInstances = {part}
+
+	local origin = hrp.Position
+	local lookVector = hrp.CFrame.LookVector
+
+	local result = workspace:Raycast(origin, lookVector * length, raycastParams) or 
+		workspace:Raycast(origin, Vector.UP_VECTOR * length, raycastParams)
+
+	return result
+end
+
+
+local function collectNearbyParts()
+	local character = PlayerHelper:isAlive()
+	local hrp = PlayerHelper:getCharacterHumanoidRootPart()
+
+    local Settings = ControllerConstants:GetSettings()
+
+	local filter = {character}
+
+	local floorFilter = RaycastParams.new()
+	floorFilter.FilterDescendantsInstances = filter
+	floorFilter.FilterType = Enum.RaycastFilterType.Blacklist
+	local floor = workspace:Raycast(hrp.Position, -Vector.UP_VECTOR * 3, floorFilter)
+	if floor then 
+        table.insert(filter, floor.Instance) 
+    end
+
+
+	local characterFilter = OverlapParams.new()
+	characterFilter.FilterDescendantsInstances = filter
+	characterFilter.FilterType = Enum.RaycastFilterType.Blacklist
+	local nearbyParts = workspace:GetPartBoundsInRadius(hrp.Position, Settings.CLIMB_DIST_THRESHOLD, characterFilter)
+	if #nearbyParts > 0 then
+		Debugging:print(nearbyParts[1].Name)
+		return nearbyParts[1]			
+	else
+		return nil
+	end
+end
+
+
+function PlayerController:ControlClimbing()
+	local character = PlayerHelper:isAlive()
+	if not character then return end
+	local hrp = PlayerHelper:getCharacterHumanoidRootPart()
+
+    local Settings = ControllerConstants:GetSettings()
+
+	local climbInstance = nil
+	local charCoordinates
+	local climbingAttachment0 = hrp.Climb0
+
+	local climbingPosition = hrp.ClimbAlignPos
+	local climbingOrientationA = hrp.ClimbAlignWall
+	local climbingOrientationB = hrp.ClimbAlignRot
+
+	while PlayerHelper.canClimb do
+		task.wait(DT)
+
+		PlayerController.climbable = collectNearbyParts()		
+		if not PlayerHelper.Climbing then
+			if PlayerController.climbable then
+				climbInstance = rayCastToPart(PlayerController.climbable, Settings.CLIMB_DIST_THRESHOLD*4)
+			end
+		end
+
+		--print(climbInstance)
+		if climbInstance and PlayerController.climbable then
+			attachToPart(climbInstance, climbingPosition)
+			PlayerHelper.Climbing = true						
+		else
+			PlayerHelper.Climbing = false
+			climbingPosition.Enabled = false
+			climbingOrientationA.Enabled = false
+			climbingOrientationB.Enabled = false
+            if AnimationController.climbTrack then
+                AnimationController.climbTrack:Stop()		
+            end
+		end
+	end
+
+	if AnimationController.climbTrack then
+		AnimationController.climbTrack:Stop()		
+	end
+	climbingPosition.Enabled = false
+	climbingOrientationA.Enabled = false
+	climbingOrientationB.Enabled = false
+
+	PlayerHelper.Climbing = false
+	--d_print("End climbing")
+end
+
+
+local function leap()
+	local c, humanoid = PlayerHelper:isAlive()
+	humanoid:ChangeState(3)
+	task.wait(DT)
+	humanoid:ChangeState(5)
+	Debugging:print("JUMPED")		
+end
+
+
+local function jump(actionName, inputState, inputObj)
+    local character, humanoid = PlayerHelper:isAlive()
+	if not character then return end
+
+    local Settings = ControllerConstants:GetSettings()
+
+	local willFlip = rollPct(Settings.FLIP_CHANCE)
+	AnimationController:StopEmotes()
+
+	if inputState == Enum.UserInputState.Begin then
+		Debugging:print("Jumping")
+		local dt = 0
+		humanoid.UseJumpPower = true
+		humanoid.JumpPower = Settings.MIN_JUMPPOWER
+
+		while humanoid.JumpPower <= Settings.MAX_JUMPPOWER-1 do
+			humanoid.JumpPower = humanoid.JumpPower + (Settings.MAX_JUMPPOWER - humanoid.JumpPower)*dt / Settings.JUMP_TIME
+			--d_print("Humanoid Jump Power: ", humanoid.JumpPower)
+			dt = dt + task.wait(DT)
+		end		
+	elseif inputState == Enum.UserInputState.End then
+		task.spawn(disableClimbForDuration, 0.55)
+		if humanoid:GetState() ~= Enum.HumanoidStateType.Freefall then
+			leap()
+			if willFlip then
+				sit()
+				AnimationController:ChooseFlip()
+			else
+				sit()
+			end
+			task.wait(0.55)
+			humanoid.Sit = false
+		end
+		humanoid.JumpPower = Settings.MIN_JUMPPOWER
+	end
+end
+
+
+local function sprint(actionName, inputState, inputObj)
+    local character, humanoid = PlayerHelper:isAlive()
+	if not character then return end
+
+    local TweenService = game:GetService("TweenService")
+
+    local Settings = ControllerConstants:GetSettings()
+
+	local newFOV = Settings.originalFOV + Settings.originalFOV * Settings.finalWalkspeed / Settings.initialWalkspeed / 25
+
+    local accelerateInfo = TweenInfo.new(3)
+    local decelerateInfo = TweenInfo.new(1)
+
+	local tween1 = TweenService:Create(humanoid, accelerateInfo, {WalkSpeed = Settings.finalWalkspeed})
+	local tween2 = TweenService:Create(humanoid, decelerateInfo, {WalkSpeed = Settings.initialWalkspeed})
+
+	if inputState == Enum.UserInputState.Begin then
+		tween1:Play()
+		CameraController:TweenFOV(newFOV, 3)
+		tween1.Completed:Connect(function()
+			tween1:Destroy()
+		end)
+	elseif inputState == Enum.UserInputState.End then
+		tween2:Play()
+		CameraController:TweenFOV(Settings.originalFOV, 1)
+		tween2.Completed:Connect(function()
+			tween2:Destroy()
+		end)
+	end
+end
+
+
+local function calculateDrag(characterVelocity, dragStrength)
+	local S = 2*(2*2) + (2*1*4)*6 + (1*1*2)*5
+	local C_D = 1.3
+
+	local conversion = 9.8 / 196.2
+	local dynamicPressure = 1/2 * 1.225 * characterVelocity.Magnitude^2 * characterVelocity.Unit * conversion^2.3
+
+	return -dynamicPressure * S * C_D * dragStrength
+end
+
+
+local function applyDrag()
+	local hrp = PlayerHelper:getCharacterHumanoidRootPart()
+	if not hrp then return end
+
+	local dragForce = hrp.Drag
+
+	dragForce.Force = calculateDrag(hrp.AssemblyLinearVelocity, PlayerController.dragStrength)
+	dragForce.Enabled = true
+end
+
+
+function PlayerController:Fall()
+    local c, humanoid = PlayerHelper:isAlive()
+	if not c then return end
+	local hrp = PlayerHelper:getCharacterHumanoidRootPart()
+	
+    local Settings = ControllerConstants:GetSettings()
+
+	local controlForce = hrp:FindFirstChild("Control") or Instance.new("VectorForce")
+	if 
+		not PlayerHelper.Holding and 
+		not PlayerHelper.Climbing and 
+		controlForce.Enabled and
+		not AnimationController.fallTrack.IsPlaying 
+	then
+		AnimationController.fallTrack:Play(0.8, 3, 0.8)
+		PlayerHelper.Falling = true
+		PlayerHelper.dragStrength = Settings.FALLING_DRAG_STRENGTH
+		AnimationController:StopEmotes()
+	elseif
+		PlayerHelper.Holding or 
+		PlayerHelper.Climbing or
+		humanoid:GetState() == Enum.HumanoidStateType.Running or
+		humanoid:GetState() == Enum.HumanoidStateType.Jumping
+	then
+		AnimationController.fallTrack:Stop()
+		AnimationController.skydiveMainTrack:Stop()
+		AnimationController.skydiveLayerTrack:Stop()
+		PlayerHelper.Falling = false
+	end
+end
+
+
+local function connectWebShootingFunctions()
+    if PlayerHelper.websEnabled and not connected then
+        print("Connecting")
+        connected = true
+        ClickBeganEvent = PlayerHelper.Mouse.Button1Down:Connect(PlayerController.WebShoot)
+        ClickEndedEvent = PlayerHelper.Mouse.Button1Up:Connect(PlayerController.ReleaseWeb)
+    elseif not PlayerHelper.websEnabled and connected then
+        print("Disconnecting")
+        connected = false
+        ClickBeganEvent:Disconnect()
+        ClickEndedEvent:Disconnect()
+    end
+end
+
+
+--[[
+	This function allows one to control their swinging and provides 
+	the pendulum motion required by holdRope3
+--]]
+function PlayerController:Update()
+	local character, humanoid = PlayerHelper:isAlive()
+	if not character then return end
+	local hrp = PlayerHelper:getCharacterHumanoidRootPart()
+
+    local Settings = ControllerConstants:GetSettings()
+
+	local lookVector
+	
+	local projectXZ = Vector3.new(1,0,1)
+
+	local camera = workspace.Camera
+	local camCF = camera.CFrame
+
+	local forwardVector = camCF:VectorToWorldSpace(Vector3.new(0, 0, -1))
+
+	if not humanoid.Sit and PlayerHelper.Holding then
+		sit()
+	end
+	
+	local controlForce = hrp.Control
+	local directionControl = hrp.Direction
+
+	if PlayerHelper.Pulling or PlayerHelper.Holding or humanoid.Sit == true then
+		controlForce.Force = humanoid.MoveDirection * Settings.CONTROL_STRENGTH
+		lookVector = forwardVector*projectXZ + humanoid.MoveDirection
+		
+		directionControl.CFrame = CFrame.lookAt(hrp.Position, hrp.Position+lookVector.Unit)
+		controlForce.Enabled = true
+		directionControl.D = 1000
+		directionControl.P = 10000
+		directionControl.MaxTorque = Vector3.new(400000, 400000, 400000)
+	else
+		controlForce.Enabled = false
+		directionControl.P = 0
+		directionControl.D = 0
+		directionControl.MaxTorque = Vector3.new()
+	end
+
+	if hrp.AssemblyLinearVelocity.Y < -Settings.SKYDIVE_SPEED then
+		directionControl.CFrame = CFrame.lookAt(hrp.Position, hrp.Position+forwardVector-2 * Vector.UP_VECTOR)
+	end
+    
+    if PlayerHelper.Dodging and not dodgeDebounce then
+        PlayerController:Dodge()
+    end 
+
+    connectWebShootingFunctions()
+    PlayerController:ControlClimbing()
+    PlayerController:AutoRotate()
+    ActionHandler:Update(sprint, jump)
+    AudioController:Update()
+    AnimationController:Update()
+end
+
+
+function PlayerController:Init()
+    local Settings = ControllerConstants:GetSettings()
+
+	PlayerHelper.Clicking = false
+	PlayerHelper.Holding = false
+	PlayerHelper.isAutomatic = false
+	PlayerHelper.canClimb = false
+	PlayerHelper.Climbing = false
+	PlayerHelper.isCameraToggled = false
+	PlayerHelper.attachedPoint = nil
+	PlayerHelper.isLookingForward = false
+	local max_force = 50000
+
+	workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+
+	local hrp = PlayerHelper:getCharacterHumanoidRootPart()
+	local character, humanoid = PlayerHelper:isAlive()
+    local mass = PlayerHelper:getCharacterMass()
+
+	humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+	humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+
+	local gravityForce = hrp:FindFirstChild("Gravity") or Instance.new("VectorForce")
+	if 
+		gravityForce.Name ~= "Gravity" 
+		or gravityForce.Force.Magnitude ~= 196.2/Settings.ANTIGRAV_MAGNITUDE * mass
+	then
+		--d_print(gravityForce.Name)
+		gravityForce.Name = "Gravity"
+		gravityForce.RelativeTo = 2
+		gravityForce.ApplyAtCenterOfMass = true
+		gravityForce.Attachment0 = PlayerHelper:getCharacterRootAttachment()
+		gravityForce.Force = -Vector.UP_VECTOR*196.2/Settings.ANTIGRAV_MAGNITUDE * mass
+		gravityForce.Parent = hrp
+		gravityForce.Enabled = false
+	end
+
+	local adjustmentVelocity = hrp:FindFirstChild("Adjustment") or Instance.new("LinearVelocity")
+	if adjustmentVelocity.Name ~= "Adjustment" or adjustmentVelocity.MaxForce ~= max_force then
+		adjustmentVelocity.Name = "Adjustment"
+		adjustmentVelocity.RelativeTo = 0
+		adjustmentVelocity.VelocityConstraintMode = Enum.VelocityConstraintMode.Vector
+		adjustmentVelocity.MaxForce = max_force
+		adjustmentVelocity.VectorVelocity = Vector3.new()
+		adjustmentVelocity.Attachment0 = PlayerHelper:getCharacterRootAttachment()
+		adjustmentVelocity.Parent = hrp
+		adjustmentVelocity.Enabled = false
+	end
+
+	local tensionForce = hrp:FindFirstChild("Tension") or Instance.new("VectorForce")
+	if tensionForce.Name ~= "Tension" then
+		tensionForce.Name = "Tension"
+		tensionForce.RelativeTo = 2
+		tensionForce.Attachment0 = PlayerHelper:getCharacterRootAttachment()
+		tensionForce.Force = Vector3.new()
+		tensionForce.ApplyAtCenterOfMass = true
+		tensionForce.Parent = hrp
+		tensionForce.Enabled = false
+	end
+
+	local dragForce = hrp:FindFirstChild("Drag") or Instance.new("VectorForce")
+	if dragForce.Name ~= "Drag" then 
+		dragForce.Name = "Drag" 
+		dragForce.Attachment0 = PlayerHelper:getCharacterRootAttachment()
+		dragForce.ApplyAtCenterOfMass = true
+		dragForce.RelativeTo = 2
+		dragForce.Parent = hrp
+		dragForce.Enabled = true
+	end
+
+	local directionControl = hrp:FindFirstChild("Direction") or Instance.new("BodyGyro")
+	if directionControl.Name ~= "Direction" or not hrp:FindFirstChild("Direction") then
+		directionControl.Name = "Direction"
+		directionControl.D = 0
+		directionControl.MaxTorque = Vector3.new(400000,400000,400000)
+		directionControl.P = 0
+		directionControl.Parent = hrp
+	end
+
+	local controlForce = hrp:FindFirstChild("Control") or Instance.new("VectorForce")
+	if controlForce.Name ~= "Control" then 
+		controlForce.Name = "Control"
+		controlForce.Attachment0 = PlayerHelper:getCharacterRootAttachment()
+		controlForce.RelativeTo = 2
+		controlForce.ApplyAtCenterOfMass = true
+		controlForce.Enabled = false
+		controlForce.Parent = hrp
+	end
+
+
+	local climbingAttachment0 = hrp:FindFirstChild("Climb0") or Instance.new("Attachment")
+	if climbingAttachment0.Name ~= "Climb0" then
+		climbingAttachment0.Name = "Climb0"
+		climbingAttachment0.Visible = Debugging.DEBUG
+
+		climbingAttachment0.Position = Vector3.new(0,0,-1.5)
+
+		climbingAttachment0.Parent = hrp
+	end
+
+	local climbingPosition = hrp:FindFirstChild("ClimbAlignPos") or Instance.new("AlignPosition")
+	if climbingPosition.Name ~= "ClimbAlignPos" then
+		climbingPosition.Name = "ClimbAlignPos"
+
+		climbingPosition.Mode = Enum.PositionAlignmentMode.TwoAttachment
+		climbingPosition.RigidityEnabled = true
+		climbingPosition.ApplyAtCenterOfMass = false
+		climbingPosition.ReactionForceEnabled = false
+
+		climbingPosition.Attachment0 = climbingAttachment0
+		climbingPosition.Enabled = false
+		climbingPosition.Parent = hrp
+	end
+
+	local climbingOrientationA = hrp:FindFirstChild("ClimbAlignWall") or Instance.new("AlignOrientation")
+	if climbingOrientationA.Name ~= "ClimbAlignWall" then
+		climbingOrientationA.Name = "ClimbAlignWall"
+
+		climbingOrientationA.Mode = Enum.OrientationAlignmentMode.OneAttachment
+		climbingOrientationA.RigidityEnabled = true
+		climbingOrientationA.ReactionTorqueEnabled = false
+		climbingOrientationA.PrimaryAxisOnly = false
+
+		climbingOrientationA.Attachment0 = climbingAttachment0
+		climbingOrientationA.Enabled = false
+		climbingOrientationA.Parent = hrp
+	end
+
+	local climbingOrientationB = hrp:FindFirstChild("ClimbAlignRot") or Instance.new("AlignOrientation")
+	if climbingOrientationB.Name ~= "ClimbAlignRot" then
+		climbingOrientationB.Name = "ClimbAlignRot"
+
+		climbingOrientationB.Mode = Enum.OrientationAlignmentMode.OneAttachment
+		climbingOrientationB.RigidityEnabled = true
+		climbingOrientationB.ReactionTorqueEnabled = false
+		climbingOrientationB.PrimaryAxisOnly = false
+
+		climbingOrientationB.Attachment0 = climbingAttachment0
+		climbingOrientationB.Enabled = false
+		climbingOrientationB.Parent = hrp
+	end
+
+	local orientation = hrp:FindFirstChild("FaceForward") or Instance.new("AlignOrientation")
+	if orientation.Name ~= "FaceForward" then
+		orientation.Name = "FaceForward"
+		orientation.Attachment0 = PlayerHelper:getCharacterRootAttachment()
+		orientation.Mode = Enum.OrientationAlignmentMode.OneAttachment
+		orientation.PrimaryAxisOnly = false
+		orientation.AlignType = Enum.AlignType.Perpendicular
+		orientation.Responsiveness = 100
+		orientation.MaxTorque = 50000
+		orientation.Parent = hrp
+		orientation.Enabled = false
+	end
+	local upsideDown = hrp:FindFirstChild("UpsideDown") or Instance.new("AlignOrientation")
+	if upsideDown.Name ~= "UpsideDown" then
+		upsideDown.Name = "UpsideDown"
+		upsideDown.Attachment0 = PlayerHelper:getCharacterRootAttachment()
+		upsideDown.Mode = Enum.OrientationAlignmentMode.OneAttachment
+		upsideDown.PrimaryAxisOnly = false
+		upsideDown.AlignType = Enum.AlignType.Perpendicular
+		upsideDown.Responsiveness = 100
+		upsideDown.MaxTorque = 50000
+		upsideDown.Parent = hrp
+		upsideDown.Enabled = false
+	end
+
+    print(self)
+    ActionHandler:Update(sprint, jump)
+    ActionHandler:HookRenderStepFunctions(applyDrag, self.Update, self.Fall)
+
+	print("Controls set")
+end
+
+return PlayerController]]></ProtectedString>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+		</Item>
+		<Item class="ModuleScript" referent="RBX78308B2BF1FD4CA5811E54E638557572">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<Content name="LinkedSource"><null></null></Content>
+				<string name="Name">Debugging</string>
+				<string name="ScriptGuid">{7557C968-89FF-48AF-8B82-A5D9FF5AC8BC}</string>
+				<ProtectedString name="Source"><![CDATA[local Debris = game:GetService("Debris")
+
+local Debugging = {}
+
+Debugging.DEBUG = false
+
+function Debugging:print(...)
+    if Debugging.DEBUG then
+        self.print = print(...)
+    end
+end
+
+function Debugging:makePartAt(pos, lifetime, size, color, lookVector)
+	if not Debugging.DEBUG then return end
+
+	size = size or Vector3.new(1, 1, 1)
+	lookVector = lookVector or Vector3.new()
+	color = color or Color3.new(1, 0, 0)
+	lifetime = lifetime or 10
+
+	local part = Instance.new("Part")
+	part.Anchored = true
+	part.CanCollide = false
+	part.CanQuery = false
+	part.Color = color
+	part.Material = Enum.Material.Neon
+	part.Size = size
+	part.CFrame = CFrame.lookAt(pos, pos+lookVector) * CFrame.new(0,0,-part.Size.Z/2)
+
+	part.Parent = workspace
+
+	Debris:AddItem(part, lifetime)
+end
+
+
+return Debugging]]></ProtectedString>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+		</Item>
+		<Item class="ModuleScript" referent="RBXD1B70457097248B597609A251BC48C4D">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<Content name="LinkedSource"><null></null></Content>
+				<string name="Name">PlayerHelper</string>
+				<string name="ScriptGuid">{873A24BD-8A47-48B9-9C83-C20FF9388320}</string>
+				<ProtectedString name="Source"><![CDATA[local feSpiderman = script:FindFirstAncestor("FE-Spiderman")
+local Debugging = require(feSpiderman.Debugging)
+local Vector = require(feSpiderman.Vector)
+
+local PlayerHelper = {}
+
+local characterMass = 0
+
+PlayerHelper.Clicking = false
+PlayerHelper.Holding = false
+PlayerHelper.Falling = false
+PlayerHelper.Dodging = false
+PlayerHelper.Hanging = false
+PlayerHelper.isAutomatic = false
+PlayerHelper.canClimb = false
+PlayerHelper.Climbing = false
+PlayerHelper.Pulling = false
+
+PlayerHelper.isLookingForward = false
+
+PlayerHelper.climbFocus = nil
+PlayerHelper.attachedPoint = nil
+
+PlayerHelper.Mouse = game:GetService("Players").LocalPlayer:GetMouse()
+
+
+function PlayerHelper:ToggleFaceForward()
+    PlayerHelper.isLookingForward = not PlayerHelper.isLookingForward
+end
+
+
+local function isExistent()
+	local exists = game:GetService("Players").LocalPlayer.Character
+	-- TODO: Consider case when character model hierarchy is nonstandard
+	if exists then
+		--d_print("Character "..exists.Name.." exists.")
+		return exists
+	else
+		--d_print("Character doesn't exist")
+		return false
+	end
+end
+
+
+function PlayerHelper:isAlive()
+	local character = isExistent()
+	if not character then return false end
+
+	--d_print("Character "..character.Name.." exists.")
+
+	local humanoid = character:FindFirstChild("Humanoid")
+
+	if 
+		not humanoid
+		or humanoid:GetState() == Enum.HumanoidStateType.Dead 
+		or humanoid.Health == 0
+		or not character
+	then
+		Debugging:print("Not alive")
+		return false 
+	end
+    
+	--d_print("Alive")
+	return character, humanoid
+end
+
+
+function PlayerHelper:getCharacterHumanoidRootPart()
+	local character = self:isAlive()
+	if not character then return nil end
+
+	return character:FindFirstChild("HumanoidRootPart")
+end
+
+
+function PlayerHelper:getCharacterRootAttachment()
+	local hrp = self:getCharacterHumanoidRootPart()
+	if not hrp then return nil end
+
+	return hrp:FindFirstChild("RootAttachment") or hrp:FindFirstChild("RootRigAttachment")
+end
+
+
+function PlayerHelper:getCharacterMass()
+	local character = self:isAlive()
+	if not character then return end
+	local mass = characterMass
+	if mass > 0 then return mass end
+	for i,v in ipairs(character:GetChildren()) do
+		if v:IsA("BasePart") and v.Name ~= "HumanoidRootPart" then
+			mass = mass + v:GetMass()
+		end
+	end
+	return mass
+end
+
+
+function PlayerHelper:rayCastToFloor()
+	local character = PlayerHelper:isAlive()
+	local hrp = PlayerHelper:getCharacterHumanoidRootPart()
+
+	local raycastParams = RaycastParams.new()
+	raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+	raycastParams.IgnoreWater = true
+	raycastParams.FilterDescendantsInstances = {character}
+
+	local origin = hrp.Position
+	local downVector = -Vector.UP_VECTOR
+
+	local result = workspace:Raycast(origin, downVector*10000, raycastParams)
+
+	return result
+end
+
+
+return PlayerHelper]]></ProtectedString>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+		</Item>
+		<Item class="ModuleScript" referent="RBX2DC19AD71B2242C0A2819F89426C3EF3">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<Content name="LinkedSource"><null></null></Content>
+				<string name="Name">SendNotification</string>
+				<string name="ScriptGuid">{A7B20B89-156D-4329-A2AD-6718876F6F5A}</string>
+				<ProtectedString name="Source"><![CDATA[return function(title, text, buttonText, duration)
+	game.StarterGui:SetCore("SendNotification", 
+		{
+			Title = title, 
+			Text = text, 
+			Icon = "rbxassetid://4688867958", 
+			Duration = duration, 
+			Button1 = buttonText
+		}
+	)
+end]]></ProtectedString>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+		</Item>
+		<Item class="ModuleScript" referent="RBX0F01094B695F4A0FB971D51B43C9D809">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<Content name="LinkedSource"><null></null></Content>
+				<string name="Name">Spring</string>
+				<string name="ScriptGuid">{7A130A5F-E42C-4DD2-83FE-31A907590700}</string>
+				<ProtectedString name="Source"><![CDATA[--https://github.com/Roblox/Core-Scripts/blob/master/CoreScriptsRoot/Modules/Server/FreeCamera/Spring.lua
+
+local Spring = {} 
+Spring.__index = Spring
+
+function Spring.new(freq, pos)
+    local self = setmetatable({}, Spring)
+    self.f = freq
+    self.p = pos
+    self.v = pos*0
+    return self
+end
+
+function Spring:Update(dt, goal)
+    local f = self.f*2*math.pi
+    local p0 = self.p
+    local v0 = self.v
+
+    local offset = goal - p0
+    local decay = math.exp(-f*dt)
+
+    local p1 = goal + (v0*dt - offset*(f*dt + 1))*decay
+    local v1 = (f*dt*(offset*f - v0) + v0)*decay
+
+    self.p = p1
+    self.v = v1
+
+    return p1
+end
+
+function Spring:Reset(pos)
+    self.p = pos
+    self.v = pos*0
+end
+
+return Spring]]></ProtectedString>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+		</Item>
+		<Item class="ModuleScript" referent="RBX3F68E093350A4282B4D9960B7A2BD7EA">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<Content name="LinkedSource"><null></null></Content>
+				<string name="Name">Thread</string>
+				<string name="ScriptGuid">{AD449D8D-560E-4E03-BEEE-646EC3F77B70}</string>
+				<ProtectedString name="Source"><![CDATA[-- Thread
+-- Stephen Leitnick
+-- January 5, 2020
+
+--[[
+
+	Thread.SpawnNow(func, ...)
+	Thread.Spawn(func, ...)
+	Thread.Delay(waitTime, func, ...)
+
+	SpawnNow(Function func, Arguments...)
+
+		>	Uses a BindableEvent to spawn a new thread
+			immediately. More performance-intensive than
+			using Thread.Spawn, but will guarantee a
+			thread is started immediately.
+
+		>	Use this only if the thread must be executed
+			right away, otherwise use Thread.Spawn for
+			the sake of performance.
+
+	Spawn(Function func, Arguments...)
+
+		>	Uses RunService's Heartbeat to spawn a new
+			thread on the next heartbeat and then
+			call the given function.
+
+		>	Better performance than Thread.SpawnNow, but
+			will have a short delay of 1 frame before
+			calling the function.
+
+	Delay(Number waitTime, Function func, Arguments...)
+
+		>	The same as Thread.Spawn, but waits to call
+			the function until the in-game time as elapsed
+			by 'waitTime' amount.
+
+		>	Returns the connection to the Heartbeat event,
+			so the delay can be cancelled by disconnecting
+			the returned connection.
+
+	DelayRepeat(Number intervalTime, Function func, Arguments...)
+
+		>	The same as Thread.Delay, except it repeats
+			indefinitely.
+		
+		>	Returns the Heartbeat connection, thus the
+			repeated delay can be stopped by disconnecting
+			the returned connection.
+
+		>	Properly bound to the time interval, thus will
+			not experience drift.
+
+	
+	Examples:
+
+		Thread.Spawn(function()
+			print("Hello from Spawn")
+		end)
+
+		Thread.Delay(1, function()
+			print("Hello from Delay")
+		end)
+
+		Thread.SpawnNow(function()
+			print("Hello from SpawnNow")
+		end)
+
+		local delayConnection = Thread.Delay(5, function()
+			print("Hello?")
+		end)
+		delayConnection:Disconnect()
+
+		local repeatConnection = Thread.DelayRepeat(1, function()
+			print("Hello again", tick())
+		end)
+		wait(5)
+		repeatConnection:Disconnect()
+
+
+	Why:
+		
+		The built-in 'spawn' and 'delay' functions have the
+		potential to be throttled unknowingly. This can cause
+		all sorts of problems. Developers need to be certain
+		when their code is going to run. This small library
+		helps give the same functionality as 'spawn' and 'delay'
+		but with the expected behavior.
+
+	Why not coroutines:
+		
+		Coroutines are powerful, but can be extremely difficult
+		to debug due to the ways that coroutines obscure the
+		stack trace.
+
+	Credit:
+	
+		evaera & buildthomas: https://devforum.roblox.com/t/coroutines-v-s-spawn-which-one-should-i-use/368966
+		Quenty: FastSpawn (AKA SpawnNow) method using BindableEvent
+
+--]]
+
+
+
+local Thread = {}
+
+local heartbeat = game:GetService("RunService").Heartbeat
+
+
+function Thread.SpawnNow(func, ...)
+	--[[
+		This method was originally written by Quenty and is slightly
+		modified for this module. The original source can be found in
+		the link below, as well as the MIT license:
+			https://github.com/Quenty/NevermoreEngine/blob/version2/Modules/Shared/Utility/fastSpawn.lua
+			https://github.com/Quenty/NevermoreEngine/blob/version2/LICENSE.md
+	--]]
+	local args = table.pack(...)
+	local bindable = Instance.new("BindableEvent")
+	bindable.Event:Connect(function() 
+		func(table.unpack(args, 1, args.n)) 
+	end)
+	bindable:Fire()
+	bindable:Destroy()
+end
+
+
+function Thread.Spawn(func, ...)
+	local args = table.pack(...)
+	local hb
+	hb = heartbeat:Connect(function()
+		hb:Disconnect()
+		func(table.unpack(args, 1, args.n))
+	end)
+end
+
+
+function Thread.Delay(waitTime, func, ...)
+	local args = table.pack(...)
+	local executeTime = (tick() + waitTime)
+	local hb
+	hb = heartbeat:Connect(function()
+		if tick() >= executeTime then
+			hb:Disconnect()
+			func(table.unpack(args, 1, args.n))
+		end
+	end)
+	return hb
+end
+
+
+function Thread.DelayRepeat(intervalTime, func, ...)
+	local args = table.pack(...)
+	local nextExecuteTime = (tick() + intervalTime)
+	local hb
+	hb = heartbeat:Connect(function()
+		if tick() >= nextExecuteTime then
+			nextExecuteTime = (tick() + intervalTime)
+			func(table.unpack(args, 1, args.n))
+		end
+	end)
+	return hb
+end
+
+
+function Thread.Wait(waitTime)
+    local thread = coroutine.running()
+    local resumeTime = (tick() + waitTime)
+    local hb
+    hb = heartbeat:Connect(function()
+        local now = tick()
+        if now >= resumeTime then
+            hb:Disconnect()
+            coroutine.resume(thread, now - resumeTime, now)
+        end
+    end)
+    return coroutine.yield()
+end
+
+
+return Thread]]></ProtectedString>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+		</Item>
+		<Item class="ModuleScript" referent="RBXC15DF9ADB5E94E13A36728BBBFA3DB59">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<Content name="LinkedSource"><null></null></Content>
+				<string name="Name">Vector</string>
+				<string name="ScriptGuid">{3A41246A-2CF1-47B1-9C6E-E36B27D04629}</string>
+				<ProtectedString name="Source"><![CDATA[local Vector = {}
+
+local ZERO = 1e-6
+
+Vector.UP_VECTOR = Vector3.new(0, 1, 0) 
+Vector.XZ_VECTOR = Vector3.new(1, 0, 1)
+Vector.INCREASE_VECTOR = 6*Vector.UP_VECTOR + 10*Vector.XZ_VECTOR
+Vector.DECREASE_VECTOR = 30*Vector.UP_VECTOR + 30*Vector.XZ_VECTOR 
+Vector.UP_CF = CFrame.new(Vector.UP_VECTOR)
+Vector.DOWN_CF = CFrame.new(-Vector.UP_VECTOR)
+
+
+function Vector.getVectorPairCos(v1, v2)
+	if typeof(v1) == "Vector3" and typeof(v2) == "Vector3" then
+		return v1:Dot(v2)/(v1.Magnitude)/(v2.Magnitude)
+	end
+end
+
+
+-- Rodrigues' Rotation Formula
+function Vector.rotateVectorAlongAxis(vector, angle, axisVector)
+	local v = math.cos(angle)*vector
+	local exv = math.sin(angle)*axisVector:Cross(vector)
+	local e = (1 - math.cos(angle))*(vector:Dot(axisVector))*axisVector
+
+	return v + exv + e
+end
+
+
+function Vector.isPosOrNeg(vector)
+	if (vector.X > 0 and vector.Z > 0) or vector.Y > 0 then
+		return 1
+	elseif vector.Magnitude < ZERO then
+		return 0
+	else
+		return -1
+	end
+end
+
+
+function Vector.bool_to_number(value)
+    return value and 1 or 0
+end
+
+
+function Vector.mapToRange(val, in_min, in_max, out_min, out_max)
+	return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+end
+
+
+return Vector
+]]></ProtectedString>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+		</Item>
+		<Item class="ModuleScript" referent="RBX2D283B34256043C6A081D7B559D7BBCA">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<Content name="LinkedSource"><null></null></Content>
+				<string name="Name">FastTween</string>
+				<string name="ScriptGuid">{53CF4857-CB37-45DC-8B20-BE6B57527FB9}</string>
+				<ProtectedString name="Source"><![CDATA[local tweenService = game:GetService("TweenService")
+
+return function(obj, info, goal)
+    local tween = tweenService:Create(obj, TweenInfo.new(table.unpack(info)), goal)
+    tween.Completed:Connect(function()
+        tween:Destroy()
+    end)
+    tween:Play()
+    return tween
+end]]></ProtectedString>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+		</Item>
+	</Item>
+</roblox>

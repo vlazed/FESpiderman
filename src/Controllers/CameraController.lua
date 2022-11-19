@@ -17,7 +17,7 @@ local velSpring = Spring.new(Settings.CAM_RESPONSIVENESS*1.5, Vector3.new())
 local panSpring = Spring.new(Settings.CAM_RESPONSIVENESS, Vector3.new())
 local zoomSpring = Spring.new(1, Vector3.new())
 
-local fastTween = require(feSpiderman.Utils.FastTween)
+local fastTween = require(feSpiderman.FastTween)
 
 
 CameraController.mouseVector = Vector3.new()
